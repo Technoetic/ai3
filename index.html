@@ -1449,8 +1449,14 @@
             }
             
             // 현재 과목의 문제 중 답변한 문제 수 계산
-            const answeredInCurrentSubject = Array.from(answeredQuestions)
-                .filter(index => questionBank[index].subject === currentSubject).length;
+            let answeredInCurrentSubject = 0;
+            if (currentSubject) {
+                answeredInCurrentSubject = Array.from(answeredQuestions)
+                    .filter(index => questionBank[index].subject === currentSubject).length;
+            } else {
+                // 전체 필터일 때는 전체 문제 중 답변한 개수
+                answeredInCurrentSubject = Array.from(answeredQuestions).length;
+            }
             
             // 모든 문제를 풀었을 때 축하 팝업 표시
             if (answeredInCurrentSubject >= filteredQuestions.length) {
@@ -1463,7 +1469,11 @@
 
             // 현재 과목의 문제 중 아직 풀지 않은 문제들의 인덱스 찾기
             const unansweredIndices = questionBank
-                .map((q, index) => (q.subject === currentSubject && !answeredQuestions.has(index)) ? index : -1)
+                .map((q, index) => {
+                    const isCurrentSubject = currentSubject ? q.subject === currentSubject : true;
+                    const isUnanswered = !answeredQuestions.has(index);
+                    return isCurrentSubject && isUnanswered ? index : -1;
+                })
                 .filter(index => index !== -1);
 
             if (unansweredIndices.length === 0) {
@@ -1477,7 +1487,7 @@
             
             // 현재 문제 설정
             currentQuestion = JSON.parse(JSON.stringify(questionBank[selectedIndex]));
-            currentQuestion.index = selectedIndex;
+            currentQuestion.index = selectedIndex;  // 실제 questionBank의 인덱스를 저장
             
             console.log('New question generated:', {
                 selectedIndex,
@@ -1659,28 +1669,27 @@
                 
                 // 현재 선택된 과목에 따라 필터링된 문제 목록 생성
                 let filteredQuestions = questionBank;
+                let answeredInCurrentSubject = 0;
+
                 if (currentSubject) {
                     filteredQuestions = questionBank.filter(q => q.subject === currentSubject);
+                    answeredInCurrentSubject = Array.from(answeredQuestions)
+                        .filter(index => questionBank[index].subject === currentSubject).length;
+                } else {
+                    // 전체 필터일 때는 전체 문제 중 답변한 개수
+                    answeredInCurrentSubject = Array.from(answeredQuestions).length;
                 }
-                
+
                 // 현재 문제의 인덱스를 직접 사용
                 if (currentQuestion && currentQuestion.index !== undefined) {
                     // 정답일 때만 answeredQuestions에 추가
                     answeredQuestions.add(currentQuestion.index);
-                    
-                    // 디버깅 로그 추가
-                    console.log('Answer processed:', {
-                        currentSubject,
-                        questionIndex: currentQuestion.index,
-                        answeredQuestions: Array.from(answeredQuestions)
-                    });
+                    // localStorage에 저장
+                    localStorage.setItem('answeredQuestions', JSON.stringify(Array.from(answeredQuestions)));
+                    console.log('Answered questions updated:', Array.from(answeredQuestions));
                     
                     // 진행 상황 업데이트
                     updateProgress();
-                    
-                    // 현재 과목의 문제 중 답변한 문제 수 계산
-                    const answeredInCurrentSubject = Array.from(answeredQuestions)
-                        .filter(index => questionBank[index].subject === currentSubject).length;
                     
                     // 모든 문제를 풀었는지 확인 (현재 과목의 문제만 고려)
                     if (answeredInCurrentSubject >= filteredQuestions.length) {
@@ -1724,6 +1733,7 @@
                 
                 // 정답일 때만 answeredQuestions에 추가
                 answeredQuestions.add(currentQuestion.index);
+                saveAnsweredQuestions();
                 
                 // 현재 선택된 과목에 따라 필터링된 문제 목록 생성
                 let filteredQuestions = questionBank;
@@ -1732,8 +1742,14 @@
                 }
                 
                 // 현재 과목의 문제 중 답변한 문제 수 계산
-                const answeredInCurrentSubject = Array.from(answeredQuestions)
-                    .filter(index => questionBank[index].subject === currentSubject).length;
+                let answeredInCurrentSubject = 0;
+                if (currentSubject) {
+                    answeredInCurrentSubject = Array.from(answeredQuestions)
+                        .filter(index => questionBank[index].subject === currentSubject).length;
+                } else {
+                    // 전체 필터일 때는 전체 문제 중 답변한 개수
+                    answeredInCurrentSubject = Array.from(answeredQuestions).length;
+                }
                 
                 // 진행 상황 업데이트
                 updateProgress();
@@ -1895,6 +1911,7 @@
                 
                 // 정답일 때만 answeredQuestions에 추가
                 answeredQuestions.add(currentQuestion.index);
+                saveAnsweredQuestions();
                 
                 // 현재 선택된 과목에 따라 필터링된 문제 목록 생성
                 let filteredQuestions = questionBank;
@@ -1903,8 +1920,14 @@
                 }
                 
                 // 현재 과목의 문제 중 답변한 문제 수 계산
-                const answeredInCurrentSubject = Array.from(answeredQuestions)
-                    .filter(index => questionBank[index].subject === currentSubject).length;
+                let answeredInCurrentSubject = 0;
+                if (currentSubject) {
+                    answeredInCurrentSubject = Array.from(answeredQuestions)
+                        .filter(index => questionBank[index].subject === currentSubject).length;
+                } else {
+                    // 전체 필터일 때는 전체 문제 중 답변한 개수
+                    answeredInCurrentSubject = Array.from(answeredQuestions).length;
+                }
                 
                 // 진행 상황 업데이트
                 updateProgress();
@@ -2648,7 +2671,11 @@
             console.log('Loading question bank...');
             loadQuestionBank();
             
+            // 답변한 문제 로드
+            loadAnsweredQuestions();
+            
             console.log('Question bank loaded:', questionBank);
+            console.log('Answered questions loaded:', Array.from(answeredQuestions));
             
             // 과목 목록 업데이트
             console.log('Updating subject list...');
@@ -2657,7 +2684,7 @@
             
             // 초기 탭 설정
             const hash = window.location.hash;
-            let initialTab = 'list';  // 기본값을 'list'로 변경
+            let initialTab = 'list';
             console.log('Current hash:', hash);
 
             if (hash) {
@@ -2675,8 +2702,8 @@
                 console.log('Maintaining current tab:', currentTabName);
                 showTab(currentTabName, true);
             } else {
-            console.log('Showing initial tab:', initialTab);
-            showTab(initialTab, true);
+                console.log('Showing initial tab:', initialTab);
+                showTab(initialTab, true);
             }
 
             // '전체' 버튼 활성화
@@ -3291,6 +3318,37 @@
 
             // 새 문제 생성
             generateQuestion();
+        }
+
+        window.onload = function() {
+            loadAnsweredQuestions();
+            // ... 기존 초기화 코드 ...
+        };
+
+        function saveAnsweredQuestions() {
+            try {
+                localStorage.setItem('answeredQuestions', JSON.stringify(Array.from(answeredQuestions)));
+                console.log('Answered questions saved:', Array.from(answeredQuestions));
+            } catch (error) {
+                console.error('Error saving answered questions:', error);
+            }
+        }
+
+        function loadAnsweredQuestions() {
+            try {
+                const saved = localStorage.getItem('answeredQuestions');
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    answeredQuestions = new Set(parsed);
+                    console.log('Answered questions loaded:', Array.from(answeredQuestions));
+                } else {
+                    answeredQuestions = new Set();
+                    console.log('No saved answered questions found');
+                }
+            } catch (error) {
+                console.error('Error loading answered questions:', error);
+                answeredQuestions = new Set();
+            }
         }
     </script>
 </body>
