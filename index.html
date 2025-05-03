@@ -1,0 +1,3297 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>랜덤 문제 출제 프로그램</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="https://cdn-icons-png.flaticon.com/32/4185/4185661.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://cdn-icons-png.flaticon.com/16/4185/4185661.png">
+    <link rel="shortcut icon" href="https://cdn-icons-png.flaticon.com/32/4185/4185661.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+        .container {
+            width: 100%;
+            max-width: none;
+            margin: 0 auto;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .quiz-section, .admin-section {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 1720px;
+            margin: 0 auto;
+            box-sizing: border-box;
+        }
+        .quiz-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .question-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            white-space: normal;
+            overflow: visible;
+            min-height: 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 16px;
+            line-height: 1.5;
+            width: 100%;
+            max-width: 1200px;
+            margin: 20px auto;
+            box-sizing: border-box;
+            position: relative;
+        }
+        #question {
+            font-size: 18px;
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+            width: 100%;
+            line-height: 1.5;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+            width: 100%;
+            max-width: 1200px;
+            align-items: center;
+        }
+        .options button {
+            width: 100%;
+            max-width: 1200px;
+            padding: 12px 24px;
+            white-space: nowrap;
+            overflow: visible;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            transition: all 0.2s ease;
+            height: 46px;
+            text-align: left;
+            box-sizing: border-box;
+            border-radius: 5px;
+        }
+        .options button:hover {
+            background-color: #e9ecef;
+            transform: none;
+            box-shadow: none;
+        }
+        .options button:active {
+            background-color: #e9ecef;
+            transform: none;
+            box-shadow: none;
+        }
+        .options button span {
+            width: 100%;
+            text-align: left;
+            white-space: nowrap;
+            overflow: visible;
+        }
+        .button-animation {
+            animation: none !important;
+        }
+        button {
+            padding: 12px 24px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background-color: #e9ecef;
+            transition: background-color 0.2s;
+            min-width: 120px;
+            height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
+            overflow: visible;
+            width: auto;
+        }
+        button:hover {
+            background-color: #dee2e6;
+        }
+        .new-question-btn {
+            background-color: #4CAF50;
+            color: white;
+            font-weight: bold;
+        }
+        .new-question-btn:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 20px;
+            font-weight: bold;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        h1, h2 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .score {
+            display: none;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-family: inherit;
+            font-size: 16px;
+            line-height: 1.5;
+            resize: vertical;
+            min-height: 100px;
+        }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+        }
+        .submit-btn {
+            background-color: #007bff;
+            color: white;
+        }
+        .submit-btn:hover {
+            background-color: #0056b3;
+        }
+        .question-list {
+            padding: 0;
+            margin: 0;
+        }
+        .question-item {
+            background-color: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            position: relative;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        .question-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .question-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            position: relative;
+        }
+        .question-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .question-type-label {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+        .question-number {
+            color: #424242;
+            font-size: 15px;
+            font-weight: 500;
+        }
+        .question-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .edit-btn, .delete-btn {
+            width: 32px;
+            height: 34px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+        .edit-btn {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .edit-btn:hover {
+            background-color: #43a047;
+            transform: scale(1.05);
+        }
+        .delete-btn {
+            background-color: #ef5350;
+            color: white;
+        }
+        .delete-btn:hover {
+            background-color: #e53935;
+            transform: scale(1.05);
+        }
+        .question-content {
+            color: #333;
+            font-size: 15px;
+            line-height: 1.5;
+            margin-top: 10px;
+        }
+        .question-content p {
+            margin: 0 0 10px 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .question-content ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        .question-content li {
+            margin: 8px 0;
+            color: #555;
+        }
+        .question-filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 24px;
+            justify-content: center;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .filter-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 20px;
+            background-color: #DEE2E6;
+            color: #333;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            margin: 4px;
+            transform: scale(1);
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            text-align: center;
+            min-width: 120px;
+            box-sizing: border-box;
+        }
+        .filter-btn:hover {
+            background-color: #e1bee7;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .filter-btn.active {
+            background-color: #4CAF50 !important;
+            color: white !important;
+            transform: translateY(-1px) !important;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+        }
+        .filter-btn.active:hover {
+            background-color: #45a049;
+        }
+        .filter-btn.button-animation {
+            animation: buttonPress 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            visibility: visible;
+        }
+        .filter-btn.deactivating {
+            animation: buttonDeactivate 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards !important;
+            pointer-events: none;
+            visibility: visible;
+        }
+        @keyframes buttonPress {
+            0% { 
+                transform: scale(1) translateY(-2px);
+                background-color: #DEE2E6;
+                color: #333;
+                box-shadow: none;
+            }
+            50% { 
+                transform: scale(0.95) translateY(-2px);
+                background-color: #43A047;
+                color: white;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            }
+            100% { 
+                transform: scale(1) translateY(-2px);
+                background-color: #43A047;
+                color: white;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            }
+        }
+        @keyframes buttonDeactivate {
+            0% {
+                transform: scale(1) translateY(-2px);
+                background-color: #7b1fa2;
+                color: white;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            }
+            50% {
+                transform: scale(0.95) translateY(0);
+                background-color: #DEE2E6;
+                color: #333;
+                box-shadow: none;
+            }
+            100% {
+                transform: scale(1) translateY(0);
+                background-color: #DEE2E6;
+                color: #333;
+                box-shadow: none;
+            }
+        }
+        .no-questions {
+            text-align: center;
+            color: #666;
+            padding: 40px;
+            font-size: 16px;
+            background-color: #f8f9fa;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+        .tab-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 1720px;
+            margin: 0 auto 20px auto;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 12px 24px;
+            border: none;
+            background-color: #e9ecef;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            color: #333;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            text-align: center;
+            min-width: 120px;
+            position: relative;
+            overflow: hidden;
+        }
+        .tab-btn:hover {
+            background-color: #dee2e6;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .tab-btn.active {
+            background-color: #007bff;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .tab-btn.active:hover {
+            background-color: #0069d9;
+        }
+        @media (max-width: 768px) {
+            .tab-buttons {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .tab-btn {
+                width: 100%;
+                padding: 10px 20px;
+            }
+        }
+        .question-type-select {
+            margin-bottom: 20px;
+        }
+        .form-toggle {
+            display: none;
+        }
+        .form-toggle.active {
+            display: block;
+        }
+        .answer-input {
+            width: 100%;
+            max-width: 720px;
+            height: 46px;
+            padding: 0 16px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            outline: none;
+            transition: border-color 0.3s ease;
+            box-sizing: border-box;
+        }
+        .answer-input:focus {
+            border-color: #4CAF50;
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.2);
+        }
+        .answer-input::placeholder {
+            color: #999;
+            font-size: 14px;
+        }
+        #question-content {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            margin: 0 auto;
+        }
+        .correct-answer {
+            color: green;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .wrong-answer {
+            color: red;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .alternative-answers {
+            margin-top: 10px;
+        }
+        .alternative-answer {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        .alternative-answer input {
+            margin-right: 10px;
+        }
+        .add-alternative-btn {
+            background-color: #6c757d;
+            color: white;
+            margin-top: 10px;
+        }
+        .deleted {
+            background-color: #fff3f3;
+        }
+        .restore-btn {
+            background-color: #28a745;
+            color: white;
+            padding: 5px 10px;
+            float: right;
+            margin-left: 10px;
+        }
+        .restore-btn:hover {
+            background-color: #218838;
+        }
+        .sequence-items {
+            margin: 15px 0;
+        }
+        .sequence-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            gap: 5px;
+        }
+        .sequence-input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .sequence-item .delete-btn {
+            width: 32px;
+            height: 33px;
+            background-color: #DC3545;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s ease;
+        }
+        .sequence-item .delete-btn:hover {
+            background-color: #BB2D3B;
+        }
+        .move-btn {
+            padding: 8px 12px;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            height: 33px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .move-btn:hover {
+            background-color: #5a6268;
+        }
+        .sequence-answer {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+            align-items: center;
+        }
+        .sequence-option {
+            width: 720px;
+            height: 46px;
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: grab;
+            user-select: none;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0 16px;
+            transition: all 0.2s ease;
+        }
+        .sequence-option:hover {
+            background-color: #e9ecef;
+            border-color: #adb5bd;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .sequence-option:active {
+            cursor: grabbing;
+            background-color: #dee2e6;
+            transform: scale(0.98);
+        }
+        .sequence-option.dragging {
+            opacity: 0.8;
+            background-color: #e9ecef;
+            cursor: grabbing;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transform: scale(1.02);
+        }
+        .add-btn {
+            background-color: #2FB344;
+            color: white;
+            height: 44px;
+            width: 179.11px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 0 16px;
+            margin-right: 10px;
+        }
+        .add-btn:hover {
+            background-color: #268636;
+        }
+        .order-submit-btn {
+            width: 200px;
+            height: 46px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .order-submit-btn:hover {
+            background-color: #45a049;
+        }
+        .submit-button {
+            width: 720px !important;
+            height: 46px !important;
+            min-width: 720px !important;
+            min-height: 46px !important;
+            max-width: 720px !important;
+            max-height: 46px !important;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+            padding: 0 24px;
+        }
+        .submit-button:hover {
+            background-color: #45a049;
+        }
+        .list-section {
+            background-color: white;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 24px;
+            width: 100%;
+            max-width: 1720px;
+            margin: 20px auto;
+            box-sizing: border-box;
+        }
+        .list-section h2 {
+            text-align: center;
+            margin-bottom: 24px;
+            font-size: 20px;
+            color: #333;
+        }
+        .question-type-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            margin-right: 10px;
+        }
+        .type-multiple {
+            background-color: #e3f2fd;
+            color: #1976d2;
+        }
+        .type-subjective {
+            background-color: #f3e5f5;
+            color: #7b1fa2;
+        }
+        .type-sequence {
+            background-color: #e8f5e9;
+            color: #388e3c;
+        }
+        .progress {
+            width: 100%;
+            max-width: 720px;
+            height: 30px;
+            background-color: #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin: 0 auto 20px auto;
+        }
+        .progress-fill {
+            height: 100%;
+            background-color: #4CAF50;
+            transition: width 0.3s ease;
+            position: relative;
+            z-index: 0;
+        }
+        .progress-text {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            font-weight: bold;
+            color: #333;
+            z-index: 1;
+            text-shadow: 0 0 2px white;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+        .progress-bar {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        .completion-celebration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            animation: fadeIn 0.5s ease;
+        }
+        .completion-message {
+            background-color: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            animation: scaleIn 0.5s ease;
+            max-width: 90%;
+            width: 400px;
+        }
+        .completion-message h2 {
+            color: #4CAF50;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+        .completion-message p {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 18px;
+            line-height: 1.5;
+        }
+        .celebration-btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+        .celebration-btn:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes scaleIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: var(--confetti-color);
+            clip-path: polygon(50% 0%, 90% 20%, 100% 60%, 75% 100%, 25% 100%, 0% 60%, 10% 20%);
+            animation: confetti-fall var(--fall-duration) ease-in forwards;
+        }
+        @keyframes confetti-fall {
+            0% { 
+                transform: translateY(-10px) rotate(0deg);
+                opacity: 1;
+            }
+            100% { 
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+        .button-animation {
+            animation: buttonPress 0.3s ease;
+        }
+        @keyframes buttonPress {
+            0% { transform: scale(1); }
+            50% { transform: scale(0.95); }
+            100% { transform: scale(1); }
+        }
+        .options button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+        .submit-button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+        @media (max-width: 768px) {
+            .quiz-section, .admin-section, .list-section {
+                padding: 15px;
+                margin: 10px auto;
+            }
+
+            .question-container {
+                padding: 15px;
+                margin: 10px auto;
+            }
+
+            .options button {
+                padding: 10px 15px;
+                font-size: 14px;
+            }
+
+            .answer-input {
+                height: 40px;
+                font-size: 14px;
+            }
+
+            .question-item {
+                padding: 15px;
+            }
+
+            .question-filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filter-btn {
+                width: 100%;
+                margin-bottom: 5px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .quiz-section, .admin-section, .list-section {
+                padding: 10px;
+                margin: 5px auto;
+            }
+
+            .question-container {
+                padding: 10px;
+                margin: 5px auto;
+            }
+
+            #question {
+                font-size: 16px;
+            }
+
+            .options button {
+                padding: 8px 12px;
+                font-size: 13px;
+            }
+
+            .answer-input {
+                height: 36px;
+                font-size: 13px;
+            }
+        }
+        .form-control {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        .subject-filter {
+            margin-left: 10px;
+        }
+        .subject-filter select {
+            width: 200px;
+            height: 36px;
+            padding: 5px 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .subject-filters {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-left: 10px;
+        }
+
+        /* 과목 필터 버튼 스타일 */
+        .subject-filters .filter-btn {
+            background-color: #e3f2fd;
+            color: #1976d2;
+            transition: all 0.2s ease;
+        }
+        .subject-filters .filter-btn:hover {
+            background-color: #bbdefb;
+        }
+        .subject-filters .filter-btn.active {
+            background-color: #1976d2;
+            color: white;
+        }
+        .subject-filters .filter-btn.active:hover {
+            background-color: #1565c0;
+        }
+        .subject-filters .filter-btn.deactivating {
+            animation: subjectButtonDeactivate 0.2s ease forwards;
+        }
+
+        @keyframes subjectButtonDeactivate {
+            0% {
+                transform: scale(1);
+                background-color: #1976d2;
+                color: white;
+            }
+            100% {
+                transform: scale(1);
+                background-color: #e3f2fd;
+                color: #1976d2;
+            }
+        }
+        .quiz-filters {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+            width: 100%;
+            visibility: visible !important;
+        }
+        .quiz-filters .subject-filters {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            visibility: visible !important;
+        }
+        .quiz-filters .filter-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 20px;
+            background-color: #DEE2E6;
+            color: #333;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            min-width: 120px;
+            text-align: center;
+            visibility: visible !important;
+            display: inline-block !important;
+            position: relative;
+            overflow: hidden;
+        }
+        .quiz-filters .filter-btn:hover {
+            background-color: #81C784;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .quiz-filters .filter-btn.active {
+            background-color: #43A047;
+            color: white;
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .quiz-filters .filter-btn.active:hover {
+            background-color: #388E3C;
+        }
+        .quiz-filters .filter-btn.deactivating {
+            animation: quizButtonDeactivate 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards !important;
+            pointer-events: none;
+        }
+        @keyframes quizButtonDeactivate {
+            0% {
+                transform: translateY(-2px) scale(1.02);
+                background-color: #43A047;
+                color: white;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            }
+            50% {
+                transform: translateY(0) scale(0.98);
+                background-color: #DEE2E6;
+                color: #333;
+                box-shadow: none;
+            }
+            100% {
+                transform: scale(1) translateY(0);
+                background-color: #DEE2E6;
+                color: #333;
+                box-shadow: none;
+            }
+        }
+        .filter-btn.button-animation,
+        .filter-btn.deactivating,
+        .quiz-filters .filter-btn.button-animation,
+        .quiz-filters .filter-btn.deactivating {
+            visibility: visible;
+        }
+        /* 버튼 애니메이션 스타일 */
+        .button-animation {
+            animation: jiggle 0.4s;
+        }
+        @keyframes jiggle {
+            0%   { transform: scale(1); }
+            20%  { transform: scale(1.08) rotate(-2deg);}
+            60%  { transform: scale(0.90) rotate(2deg);}
+            100% { transform: scale(1);}
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>랜덤 문제 출제 프로그램</h1>
+        
+        <div class="tab-buttons">
+            <button class="tab-btn active" onclick="showTab('quiz')">문제 풀기</button>
+            <button class="tab-btn" onclick="showTab('admin')">문제 등록</button>
+            <button class="tab-btn" onclick="showTab('list')">문제 목록</button>
+            <button class="tab-btn" onclick="showTab('edit')" style="display: none;">문제 수정</button>
+        </div>
+
+        <div id="quiz-section" class="quiz-section">
+            <div class="quiz-filters">
+                <div class="subject-filters">
+                    <button class="filter-btn active" onclick="filterQuizBySubject('')" style="display: inline-block; visibility: visible; opacity: 1;">전체</button>
+                    <button class="filter-btn" onclick="filterQuizBySubject('소프트웨어 설계 | 요구사항 확인')" style="display: inline-block; visibility: visible; opacity: 1;">소프트웨어 설계 | 요구사항 확인</button>
+                    <button class="filter-btn" onclick="filterQuizBySubject('소프트웨어 설계 | 화면 설계')" style="display: inline-block; visibility: visible; opacity: 1;">소프트웨어 설계 | 화면 설계</button>
+                    <button class="filter-btn" onclick="filterQuizBySubject('소프트웨어 설계 | 애플리케이션 설계')" style="display: inline-block; visibility: visible; opacity: 1;">소프트웨어 설계 | 애플리케이션 설계</button>
+                </div>
+            </div>
+            <div id="progress" class="progress">
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                    <div class="progress-text">진행 상황: 0/0</div>
+                </div>
+            </div>
+            <h2 id="question">문제가 여기에 표시됩니다.</h2>
+            <div id="question-content"></div>
+            <div id="result" class="result"></div>
+        </div>
+
+        <div id="admin-section" class="admin-section" style="display: none;">
+            <div class="question-type-select">
+                <button onclick="toggleQuestionType('multiple')" class="tab-btn active">객관식</button>
+                <button onclick="toggleQuestionType('subjective')" class="tab-btn">주관식</button>
+                <button onclick="toggleQuestionType('sequence')" class="tab-btn">순서 나열</button>
+            </div>
+
+            <!-- 객관식 문제 등록 폼 -->
+            <form id="multipleChoiceForm" class="form-toggle active" onsubmit="addMultipleChoiceQuestion(event)">
+                <div class="form-group">
+                    <input type="text" id="mcSubject" required class="form-control" placeholder="과목을 입력하세요">
+                </div>
+                <div class="form-group">
+                    <textarea id="mcQuestion" required placeholder="문제를 입력하세요"></textarea>
+                </div>
+                <div class="form-group">
+                    <input type="text" id="option1" required placeholder="보기 1번을 입력하세요">
+                </div>
+                <div class="form-group">
+                    <input type="text" id="option2" required placeholder="보기 2번을 입력하세요">
+                </div>
+                <div class="form-group">
+                    <input type="text" id="option3" required placeholder="보기 3번을 입력하세요">
+                </div>
+                <div class="form-group">
+                    <input type="text" id="option4" required placeholder="보기 4번을 입력하세요">
+                </div>
+                <div class="form-group">
+                    <input type="number" id="mcCorrectAnswer" min="1" max="4" required placeholder="정답 번호를 입력하세요">
+                </div>
+                <button type="submit" class="submit-btn">객관식 문제 등록</button>
+            </form>
+
+            <!-- 주관식 문제 등록 폼 -->
+            <form id="subjectiveForm" class="form-toggle" onsubmit="addSubjectiveQuestion(event)">
+                <div class="form-group">
+                    <input type="text" id="subSubject" required class="form-control" placeholder="과목을 입력하세요">
+                </div>
+                <div class="form-group">
+                    <textarea id="subQuestion" required placeholder="문제를 입력하세요"></textarea>
+                </div>
+                <div class="form-group">
+                    <input type="text" id="subCorrectAnswer" required placeholder="정답을 입력하세요">
+                </div>
+                <button type="submit" class="submit-btn">주관식 문제 등록</button>
+            </form>
+
+            <!-- 순서 나열 문제 등록 폼 -->
+            <form id="sequenceForm" class="form-toggle" onsubmit="addSequenceQuestion(event)">
+                <div class="form-group">
+                    <input type="text" id="seqSubject" required class="form-control" placeholder="과목을 입력하세요">
+                </div>
+                <div class="form-group">
+                    <textarea id="seqQuestion" required placeholder="문제를 입력하세요"></textarea>
+                </div>
+                <div id="sequenceItems" class="sequence-items">
+                    <div class="sequence-item">
+                        <input type="text" class="sequence-input" placeholder="순서 1" required>
+                    </div>
+                    <div class="sequence-item">
+                        <input type="text" class="sequence-input" placeholder="순서 2" required>
+                    </div>
+                </div>
+                <div class="button-container">
+                    <button type="submit" class="submit-btn">순서 나열 문제 등록</button>
+                    <button type="button" class="add-btn" onclick="addSequenceItem()">항목 추가</button>
+                </div>
+            </form>
+        </div>
+
+        <div id="edit-section" class="admin-section" style="display: none;">
+            <h2>문제 수정</h2>
+            
+            <div class="question-type-select">
+                <button onclick="toggleQuestionType('multiple')" class="tab-btn">객관식</button>
+                <button onclick="toggleQuestionType('subjective')" class="tab-btn">주관식</button>
+                <button onclick="toggleQuestionType('sequence')" class="tab-btn">순서 나열</button>
+            </div>
+
+            <!-- 객관식 문제 수정 폼 -->
+            <form id="editMultipleChoiceForm" class="form-toggle" onsubmit="updateQuestion(event)">
+                <div class="form-group">
+                    <input type="text" id="editMcSubject" required class="form-control" placeholder="과목을 입력하세요">
+                </div>
+                <div class="form-group">
+                    <textarea id="editMcQuestion" required placeholder="문제를 입력하세요"></textarea>
+                </div>
+                <div class="form-group">
+                    <input type="text" id="editOption1" required placeholder="보기 1번을 입력하세요">
+                </div>
+                <div class="form-group">
+                    <input type="text" id="editOption2" required placeholder="보기 2번을 입력하세요">
+                </div>
+                <div class="form-group">
+                    <input type="text" id="editOption3" required placeholder="보기 3번을 입력하세요">
+                </div>
+                <div class="form-group">
+                    <input type="text" id="editOption4" required placeholder="보기 4번을 입력하세요">
+                </div>
+                <div class="form-group">
+                    <input type="number" id="editMcCorrectAnswer" min="1" max="4" required placeholder="정답 번호를 입력하세요">
+                </div>
+                <button type="submit" class="submit-btn">수정 완료</button>
+            </form>
+
+            <!-- 주관식 문제 수정 폼 -->
+            <form id="editSubjectiveForm" class="form-toggle" onsubmit="updateQuestion(event)">
+                <div class="form-group">
+                    <input type="text" id="editSubSubject" required class="form-control" placeholder="과목을 입력하세요">
+                </div>
+                <div class="form-group">
+                    <textarea id="editSubQuestion" required placeholder="문제를 입력하세요"></textarea>
+                </div>
+                <div class="form-group">
+                    <input type="text" id="editSubCorrectAnswer" required placeholder="정답을 입력하세요">
+                </div>
+                <button type="submit" class="submit-btn">수정 완료</button>
+            </form>
+
+            <!-- 순서 나열 문제 수정 폼 -->
+            <form id="editSequenceForm" class="form-toggle" onsubmit="updateQuestion(event)">
+                <div class="form-group">
+                    <input type="text" id="editSeqSubject" required class="form-control" placeholder="과목을 입력하세요">
+                </div>
+                <div class="form-group">
+                    <textarea id="editSeqQuestion" required placeholder="문제를 입력하세요"></textarea>
+                </div>
+                <div id="editSequenceItems" class="sequence-items">
+                    <div class="sequence-item">
+                        <input type="text" class="sequence-input" placeholder="순서 1" required>
+                    </div>
+                    <div class="sequence-item">
+                        <input type="text" class="sequence-input" placeholder="순서 2" required>
+                    </div>
+                </div>
+                <div class="button-container">
+                    <button type="submit" class="submit-btn">수정 완료</button>
+                    <button type="button" class="add-btn" onclick="addEditSequenceItem()">항목 추가</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- 문제 목록 섹션 -->
+        <div id="list-section" class="list-section" style="display: none;">
+            <div class="quiz-filters">
+                <div class="subject-filters">
+                    <button class="filter-btn active" onclick="filterQuestions('all')" style="background-color: #4CAF50; color: white; transform: translateY(-1px); box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">전체</button>
+                <button class="filter-btn" onclick="filterQuestions('multiple')">객관식</button>
+                <button class="filter-btn" onclick="filterQuestions('subjective')">주관식</button>
+                <button class="filter-btn" onclick="filterQuestions('sequence')">순서 나열</button>
+                </div>
+            </div>
+            <div class="question-list" id="questionList"></div>
+        </div>
+    </div>
+
+    <script>
+        let questionBank = [
+            {
+                type: 'multiple',
+                subject: '소프트웨어 설계 | 요구사항 확인',
+                question: '요구사항 확인 과정에서 수행하는 작업은?',
+                options: [
+                    '요구사항 도출',
+                    '요구사항 분석',
+                    '요구사항 명세',
+                    '요구사항 검증'
+                ],
+                correctAnswer: 0
+            },
+            {
+                type: 'multiple',
+                subject: '소프트웨어 설계 | 화면 설계',
+                question: '화면 설계 시 고려해야 할 사항은?',
+                options: [
+                    '사용자 경험',
+                    '접근성',
+                    '반응형 디자인',
+                    '모든 항목'
+                ],
+                correctAnswer: 3
+            },
+            {
+                type: 'multiple',
+                subject: '테스트',
+                question: '테스트 문제입니다.',
+                options: [
+                    '보기 1',
+                    '보기 2',
+                    '보기 3',
+                    '보기 4'
+                ],
+                correctAnswer: 0
+            }
+        ];  // Initialize with sample questions
+
+        let currentQuestion = null;
+        let answeredQuestions = new Set();
+        let remainingQuestions = [];
+        let questionSequence = 1;
+        let lastAnsweredTime = 0; // 마지막으로 답변한 시간을 저장
+
+        // localStorage 관련 함수들 추가
+        function saveQuestionBank() {
+            localStorage.setItem('questionBank', JSON.stringify(questionBank));
+        }
+
+        function loadQuestionBank() {
+            const savedQuestionBank = localStorage.getItem('questionBank');
+            questionBank = savedQuestionBank ? JSON.parse(savedQuestionBank) : [];
+            
+            // 문제 은행 로드 후 전체 버튼 활성화
+            const allButton = document.querySelector('#list-section .subject-filters .filter-btn[onclick="filterQuestions(\'all\')"]');
+            if (allButton) {
+                // 다른 모든 버튼의 active 상태 제거
+                document.querySelectorAll('#list-section .subject-filters .filter-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                    btn.style.backgroundColor = '';
+                    btn.style.color = '';
+                    btn.style.transform = '';
+                    btn.style.boxShadow = '';
+                });
+
+                // 전체 버튼 활성화
+                allButton.classList.add('active');
+                allButton.style.display = 'inline-block';
+                allButton.style.visibility = 'visible';
+                allButton.style.opacity = '1';
+                allButton.style.backgroundColor = '#4CAF50';
+                allButton.style.color = 'white';
+                allButton.style.transform = 'translateY(-1px)';
+                allButton.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
+                
+                // 필터 상태 저장 및 적용
+                const currentState = history.state || {};
+                history.replaceState({
+                    ...currentState,
+                    listState: {
+                        activeFilters: ['all'],
+                        timestamp: Date.now()
+                    }
+                }, '', window.location.href);
+                
+                filterQuestions('all');
+            }
+        }
+
+        function toggleQuestionType(type) {
+            // 모든 폼 숨기기
+            document.querySelectorAll('.form-toggle').forEach(form => form.classList.remove('active'));
+            
+            // 모든 버튼의 active 클래스 제거
+            document.querySelectorAll('.question-type-select .tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+                btn.style.backgroundColor = '#e9ecef';
+                btn.style.color = '#333';
+            });
+            
+            // 선택된 버튼에 active 클래스 추가 및 스타일 적용
+            const selectedBtn = document.querySelector(`[onclick="toggleQuestionType('${type}')"]`);
+            selectedBtn.classList.add('active');
+            selectedBtn.style.backgroundColor = '#007bff';
+            selectedBtn.style.color = 'white';
+            
+            // 해당하는 폼 표시
+            if (type === 'multiple') {
+                document.getElementById('multipleChoiceForm').classList.add('active');
+            } else if (type === 'subjective') {
+                document.getElementById('subjectiveForm').classList.add('active');
+            } else {
+                document.getElementById('sequenceForm').classList.add('active');
+            }
+        }
+
+        function addAlternativeAnswer() {
+            const container = document.getElementById('alternativeAnswers');
+            const newAnswer = document.createElement('div');
+            newAnswer.className = 'alternative-answer';
+            newAnswer.innerHTML = `
+                <input type="text" class="alternative-answer-input">
+                <button type="button" onclick="this.parentElement.remove()">삭제</button>
+            `;
+            container.appendChild(newAnswer);
+        }
+
+        // 배열을 랜덤하게 섞는 함수 추가
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        // 버튼 너비 자동 조정 함수 수정
+        function adjustButtonWidth(button) {
+            // 버튼의 실제 스타일 가져오기
+            const styles = window.getComputedStyle(button);
+            const paddingLeft = parseFloat(styles.paddingLeft);
+            const paddingRight = parseFloat(styles.paddingRight);
+            const borderLeft = parseFloat(styles.borderLeftWidth);
+            const borderRight = parseFloat(styles.borderRightWidth);
+            
+            // 임시 span을 생성하여 텍스트 너비만 측정
+            const tempSpan = document.createElement('span');
+            tempSpan.style.visibility = 'hidden';
+            tempSpan.style.position = 'absolute';
+            tempSpan.style.whiteSpace = 'nowrap';
+            tempSpan.style.font = styles.font;
+            tempSpan.textContent = button.textContent;
+            
+            document.body.appendChild(tempSpan);
+            const textWidth = tempSpan.offsetWidth;
+            document.body.removeChild(tempSpan);
+            
+            // 실제 버튼 너비 계산 (텍스트 너비 + 패딩 + 테두리)
+            const totalWidth = textWidth + paddingLeft + paddingRight + borderLeft + borderRight;
+            
+            // 최소 너비만 적용하고 최대 너비 제한은 제거
+            const minWidth = 120;
+            const finalWidth = Math.max(minWidth, totalWidth);
+            
+            button.style.width = `${finalWidth}px`;
+        }
+
+        // 보기 버튼들의 너비를 가장 긴 버튼 기준으로 통일하는 함수 수정
+        function adjustOptionButtonsWidth() {
+            const optionButtons = document.querySelectorAll('.options button');
+            if (optionButtons.length === 0) return;
+
+            // 가장 긴 버튼의 너비 찾기
+            let maxWidth = 0;
+            optionButtons.forEach(button => {
+                const styles = window.getComputedStyle(button);
+                const paddingLeft = parseFloat(styles.paddingLeft);
+                const paddingRight = parseFloat(styles.paddingRight);
+                const borderLeft = parseFloat(styles.borderLeftWidth);
+                const borderRight = parseFloat(styles.borderRightWidth);
+                
+                const tempSpan = document.createElement('span');
+                tempSpan.style.visibility = 'hidden';
+                tempSpan.style.position = 'absolute';
+                tempSpan.style.whiteSpace = 'nowrap';
+                tempSpan.style.font = styles.font;
+                tempSpan.textContent = button.textContent;
+                
+                document.body.appendChild(tempSpan);
+                const textWidth = tempSpan.offsetWidth;
+                document.body.removeChild(tempSpan);
+                
+                const totalWidth = textWidth + paddingLeft + paddingRight + borderLeft + borderRight;
+                maxWidth = Math.max(maxWidth, totalWidth);
+            });
+
+            // 모든 버튼에 최대 너비 적용
+            optionButtons.forEach(button => {
+                button.style.width = `${maxWidth}px`;
+            });
+        }
+
+        // generateQuestion 함수 수정
+        function generateQuestion() {
+            console.log('generateQuestion called');
+            console.log('Current subject:', currentSubject);
+            console.log('Answered questions:', answeredQuestions.size);
+            console.log('Total questions:', questionBank.length);
+            
+            // 활성화된 필터가 있는지 확인
+            const activeFilters = document.querySelectorAll('#quiz-section .subject-filters .filter-btn[onclick*="filterQuizBySubject"].active');
+            if (activeFilters.length === 0) {
+                document.getElementById('question').textContent = '';
+                document.getElementById('question-content').innerHTML = '';
+                document.getElementById('result').textContent = '';
+                document.getElementById('progress').style.display = 'none';
+                return;
+            }
+            
+            // 현재 선택된 과목에 따라 필터링된 문제 목록 생성
+            let filteredQuestions = questionBank;
+            if (currentSubject) {
+                filteredQuestions = questionBank.filter(q => q.subject === currentSubject);
+                console.log('Filtered questions for subject:', currentSubject, filteredQuestions);
+            }
+            
+            // 현재 과목의 문제 중 답변한 문제 수 계산
+            const answeredInCurrentSubject = Array.from(answeredQuestions)
+                .filter(index => questionBank[index].subject === currentSubject).length;
+            
+            // 모든 문제를 풀었을 때 축하 팝업 표시
+            if (answeredInCurrentSubject >= filteredQuestions.length) {
+                console.log('All questions answered, showing celebration');
+                setTimeout(() => {
+                    showCompletionCelebration();
+                }, 1000);
+                return;
+            }
+
+            // 현재 과목의 문제 중 아직 풀지 않은 문제들의 인덱스 찾기
+            const unansweredIndices = questionBank
+                .map((q, index) => (q.subject === currentSubject && !answeredQuestions.has(index)) ? index : -1)
+                .filter(index => index !== -1);
+
+            if (unansweredIndices.length === 0) {
+                console.log('No more questions to answer');
+                return;
+            }
+
+            // 랜덤하게 하나의 문제 선택
+            const randomIndex = Math.floor(Math.random() * unansweredIndices.length);
+            const selectedIndex = unansweredIndices[randomIndex];
+            
+            // 현재 문제 설정
+            currentQuestion = JSON.parse(JSON.stringify(questionBank[selectedIndex]));
+            currentQuestion.index = selectedIndex;
+            
+            console.log('New question generated:', {
+                selectedIndex,
+                currentQuestion: {
+                    index: currentQuestion.index,
+                    subject: currentQuestion.subject,
+                    question: currentQuestion.question
+                },
+                unansweredIndices
+            });
+            
+            updateProgress();
+            displayCurrentQuestion();
+        }
+
+        function displayCurrentQuestion() {
+            if (!currentQuestion) return;
+            
+            document.getElementById('question').textContent = currentQuestion.question;
+            const contentDiv = document.getElementById('question-content');
+            contentDiv.innerHTML = '';
+
+            if (currentQuestion.type === 'multiple') {
+                const optionsDiv = document.createElement('div');
+                optionsDiv.className = 'options';
+                
+                const optionsWithIndex = currentQuestion.options.map((option, index) => ({
+                    text: option,
+                    isCorrect: index === currentQuestion.correctAnswer
+                }));
+                
+                const shuffledOptions = shuffleArray(optionsWithIndex);
+                currentQuestion.shuffledOptions = shuffledOptions;
+                
+                const numberCircles = ['①', '②', '③', '④'];
+                
+                shuffledOptions.forEach((option, index) => {
+                    const button = document.createElement('button');
+                    const textSpan = document.createElement('span');
+                    textSpan.style.width = '100%';
+                    textSpan.style.textAlign = 'left';
+                    textSpan.textContent = `${numberCircles[index]} ${option.text}`;
+                    button.appendChild(textSpan);
+                    button.onclick = () => {
+                        if (!button.disabled) {
+                            button.style.backgroundColor = '#4CAF50';
+                            setTimeout(() => {
+                                button.style.backgroundColor = '#f8f9fa';
+                                checkAnswer(option.isCorrect);
+                            }, 300);
+                        }
+                    };
+                    optionsDiv.appendChild(button);
+                });
+                
+                contentDiv.appendChild(optionsDiv);
+                
+                document.removeEventListener('keypress', handleKeyPress);
+                document.addEventListener('keypress', handleKeyPress);
+                
+                setTimeout(adjustOptionButtonsWidth, 0);
+            } else if (currentQuestion.type === 'subjective') {
+                const answerInput = document.createElement('input');
+                answerInput.type = 'text';
+                answerInput.className = 'answer-input';
+                answerInput.placeholder = '';
+                
+                // 이벤트 리스너를 전역 함수로 정의
+                window.handleSubjectiveEnter = function(e) {
+                    if (e.key === 'Enter' || e.keyCode === 13) {
+                        e.preventDefault();
+                        // Windows + H 키 조합 시뮬레이션
+                        const winKeyEvent = new KeyboardEvent('keydown', {
+                            key: 'h',
+                            code: 'KeyH',
+                            keyCode: 72,
+                            which: 72,
+                            metaKey: true,
+                            ctrlKey: false,
+                            altKey: false,
+                            shiftKey: false
+                        });
+                        document.dispatchEvent(winKeyEvent);
+                        
+                        const userAnswer = e.target.value.trim().toLowerCase();
+                        const correctAnswer = currentQuestion.correctAnswer.toLowerCase();
+                        const alternativeAnswers = currentQuestion.alternativeAnswers 
+                            ? currentQuestion.alternativeAnswers.map(ans => ans.toLowerCase()) 
+                            : [];
+                        
+                        const isCorrect = userAnswer === correctAnswer || alternativeAnswers.includes(userAnswer);
+                        checkAnswer(isCorrect);
+                        
+                        if (!isCorrect) {
+                            e.target.value = '';
+                            setTimeout(() => e.target.focus(), 100);
+                        }
+                    }
+                };
+                
+                // 이벤트 리스너 추가
+                answerInput.addEventListener('keydown', window.handleSubjectiveEnter);
+                
+                contentDiv.appendChild(answerInput);
+                setTimeout(() => answerInput.focus(), 100);
+            } else if (currentQuestion.type === 'sequence') {
+                const sequenceContainer = document.createElement('div');
+                sequenceContainer.className = 'sequence-answer';
+
+                let shuffledItems;
+                do {
+                    shuffledItems = [...currentQuestion.items];
+                    for (let i = shuffledItems.length - 1; i > 0; i--) {
+                        const j = Math.floor(Math.random() * (i + 1));
+                        [shuffledItems[i], shuffledItems[j]] = [shuffledItems[j], shuffledItems[i]];
+                    }
+                } while (shuffledItems.length > 1 && 
+                        shuffledItems.every((item, index) => item === currentQuestion.correctOrder[index]));
+
+                shuffledItems.forEach((item, index) => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'sequence-option';
+                    itemDiv.draggable = true;
+                    itemDiv.textContent = item;
+                    
+                    itemDiv.addEventListener('dragstart', dragStart);
+                    itemDiv.addEventListener('dragend', dragEnd);
+                    itemDiv.addEventListener('dragover', dragOver);
+                    itemDiv.addEventListener('drop', drop);
+                    
+                    sequenceContainer.appendChild(itemDiv);
+                });
+
+                const submitButton = document.createElement('button');
+                submitButton.textContent = '정답 제출';
+                submitButton.className = 'submit-button';
+                submitButton.onclick = () => {
+                    submitButton.classList.add('button-animation');
+                    submitButton.addEventListener('animationend', () => {
+                        submitButton.classList.remove('button-animation');
+                    });
+                    setTimeout(() => {
+                        checkSequenceAnswer(sequenceContainer);
+                    }, 200);
+                };
+
+                contentDiv.appendChild(sequenceContainer);
+                contentDiv.appendChild(submitButton);
+            }
+
+            document.getElementById('result').textContent = '';
+        }
+
+        function handleKeyPress(e) {
+            if (!currentQuestion || currentQuestion.type !== 'multiple') return;
+            
+            const num = parseInt(e.key);
+            if (!isNaN(num) && num >= 1 && num <= 4) {
+                const buttons = document.querySelectorAll('.options button');
+                if (buttons[num - 1] && !buttons[num - 1].disabled) {
+                    const selectedButton = buttons[num - 1];
+                    selectedButton.style.backgroundColor = '#4CAF50';
+                    setTimeout(() => {
+                        selectedButton.style.backgroundColor = '#f8f9fa';
+                        checkAnswer(currentQuestion.shuffledOptions[num - 1].isCorrect);
+                    }, 300);
+                }
+            }
+        }
+
+        function checkAnswer(isCorrect) {
+            const resultElement = document.getElementById('result');
+            const currentTime = Date.now();
+            
+            if (isCorrect && currentTime - lastAnsweredTime > 1000) {
+                resultElement.textContent = '정답입니다! 👏';
+                resultElement.style.color = 'green';
+                lastAnsweredTime = currentTime;
+                
+                // 현재 선택된 과목에 따라 필터링된 문제 목록 생성
+                let filteredQuestions = questionBank;
+                if (currentSubject) {
+                    filteredQuestions = questionBank.filter(q => q.subject === currentSubject);
+                }
+                
+                // 현재 문제의 인덱스를 직접 사용
+                if (currentQuestion && currentQuestion.index !== undefined) {
+                    // 정답일 때만 answeredQuestions에 추가
+                    answeredQuestions.add(currentQuestion.index);
+                    
+                    // 디버깅 로그 추가
+                    console.log('Answer processed:', {
+                        currentSubject,
+                        questionIndex: currentQuestion.index,
+                        answeredQuestions: Array.from(answeredQuestions)
+                    });
+                    
+                    // 진행 상황 업데이트
+                    updateProgress();
+                    
+                    // 현재 과목의 문제 중 답변한 문제 수 계산
+                    const answeredInCurrentSubject = Array.from(answeredQuestions)
+                        .filter(index => questionBank[index].subject === currentSubject).length;
+                    
+                    // 모든 문제를 풀었는지 확인 (현재 과목의 문제만 고려)
+                    if (answeredInCurrentSubject >= filteredQuestions.length) {
+                        setTimeout(() => {
+                            resultElement.textContent = '';
+                            currentQuestion = null;
+                            showCompletionCelebration();
+                        }, 1000);
+                    } else {
+                        setTimeout(() => {
+                            resultElement.textContent = '';
+                            currentQuestion = null;
+                            questionSequence = Math.min(questionSequence + 1, questionBank.length);
+                            generateQuestion();
+                        }, 1000);
+                    }
+                }
+            } else if (!isCorrect) {
+                resultElement.textContent = '틀렸습니다.';
+                resultElement.style.color = 'red';
+                
+                // 1초 후에 메시지 삭제
+                setTimeout(() => {
+                    resultElement.textContent = '';
+                }, 1000);
+            }
+        }
+
+        function checkSequenceAnswer(container) {
+            const currentOrder = Array.from(container.children)
+                .map(item => item.textContent);
+            
+            const isCorrect = currentOrder.every((item, index) => item === currentQuestion.correctOrder[index]);
+            const resultElement = document.getElementById('result');
+            const currentTime = Date.now();
+            
+            if (isCorrect && currentTime - lastAnsweredTime > 1000) {
+                resultElement.textContent = '정답입니다! 👏';
+                resultElement.style.color = 'green';
+                lastAnsweredTime = currentTime;
+                
+                // 정답일 때만 answeredQuestions에 추가
+                answeredQuestions.add(currentQuestion.index);
+                
+                // 현재 선택된 과목에 따라 필터링된 문제 목록 생성
+                let filteredQuestions = questionBank;
+                if (currentSubject) {
+                    filteredQuestions = questionBank.filter(q => q.subject === currentSubject);
+                }
+                
+                // 현재 과목의 문제 중 답변한 문제 수 계산
+                const answeredInCurrentSubject = Array.from(answeredQuestions)
+                    .filter(index => questionBank[index].subject === currentSubject).length;
+                
+                // 진행 상황 업데이트
+                updateProgress();
+                
+                // 모든 문제를 풀었는지 확인 (현재 과목의 문제만 고려)
+                if (answeredInCurrentSubject >= filteredQuestions.length) {
+                    setTimeout(() => {
+                        resultElement.textContent = '';
+                        currentQuestion = null;
+                        showCompletionCelebration();
+                    }, 1000);
+                } else {
+                    setTimeout(() => {
+                        resultElement.textContent = '';
+                        currentQuestion = null;
+                        questionSequence = Math.min(questionSequence + 1, questionBank.length);
+                        generateQuestion();
+                    }, 1000);
+                }
+            } else if (!isCorrect) {
+                resultElement.textContent = '틀렸습니다.';
+                resultElement.style.color = 'red';
+                
+                // 1초 후에 메시지 삭제
+                setTimeout(() => {
+                    resultElement.textContent = '';
+                }, 1000);
+            }
+        }
+
+        // 순서 나열 문제 관련 함수들
+        function addSequenceItem() {
+            const container = document.getElementById('sequenceItems');
+            const itemCount = container.children.length;
+            const newItem = document.createElement('div');
+            newItem.className = 'sequence-item';
+            newItem.innerHTML = `
+                <input type="text" class="sequence-input" placeholder="순서 ${itemCount + 1}" required>
+                ${itemCount >= 2 ? '<button type="button" class="delete-btn" onclick="removeSequenceItem(this)"><i class="fas fa-times"></i></button>' : ''}
+            `;
+            container.appendChild(newItem);
+        }
+
+        function removeSequenceItem(button) {
+            const item = button.parentElement;
+            const container = item.parentElement;
+            
+            if (container.children.length <= 3) {
+                alert('최소 3개의 항목이 필요합니다.');
+                return;
+            }
+            
+            item.remove();
+            
+            // 순서 번호 재정렬
+            Array.from(container.children).forEach((item, index) => {
+                const input = item.querySelector('.sequence-input');
+                input.placeholder = `순서 ${index + 1}`;
+            });
+        }
+
+        function addSequenceQuestion(event) {
+            event.preventDefault();
+            const subject = document.getElementById('seqSubject').value.trim();
+            const question = document.getElementById('seqQuestion').value;
+            const items = Array.from(document.getElementById('sequenceItems').children)
+                .map(item => item.querySelector('.sequence-input').value);
+
+            if (!subject || !question || items.some(item => !item)) {
+                alert('모든 필드를 입력해주세요.');
+                return;
+            }
+
+            const newQuestion = {
+                type: 'sequence',
+                subject: subject,
+                question: question,
+                items: items,
+                correctOrder: [...items]
+            };
+
+            questionBank.push(newQuestion);
+            saveQuestionBank();
+            event.target.reset();
+            alert('순서 나열 문제가 등록되었습니다!');
+            
+            // 과목 목록 업데이트
+            updateSubjectList();
+            
+            // 문제 풀기 탭의 필터 버튼 상태 업데이트
+            const quizFilters = document.querySelector('#quiz-section .subject-filters');
+            if (quizFilters) {
+                const existingButtons = quizFilters.querySelectorAll('.filter-btn');
+                existingButtons.forEach(btn => {
+                    const btnSubject = btn.getAttribute('onclick').match(/'([^']+)'/)[1];
+                    if (btnSubject === subject || btnSubject === '') {
+                        btn.style.display = 'inline-block';
+                        btn.style.visibility = 'visible';
+                        btn.style.opacity = '1';
+                    }
+                });
+            }
+        }
+
+        // 드래그 앤 드롭 관련 함수들
+        function dragStart(e) {
+            e.target.classList.add('dragging');
+        }
+
+        function dragEnd(e) {
+            e.target.classList.remove('dragging');
+        }
+
+        function dragOver(e) {
+            e.preventDefault();
+            const draggingItem = document.querySelector('.dragging');
+            const container = draggingItem.parentElement;
+            const afterElement = getDragAfterElement(container, e.clientY);
+            
+            if (afterElement) {
+                container.insertBefore(draggingItem, afterElement);
+            } else {
+                container.appendChild(draggingItem);
+            }
+        }
+
+        function getDragAfterElement(container, y) {
+            const draggableElements = [...container.querySelectorAll('.sequence-option:not(.dragging)')];
+            
+            return draggableElements.reduce((closest, child) => {
+                const box = child.getBoundingClientRect();
+                const offset = y - box.top - box.height / 2;
+                
+                if (offset < 0 && offset > closest.offset) {
+                    return { offset: offset, element: child };
+                } else {
+                    return closest;
+                }
+            }, { offset: Number.NEGATIVE_INFINITY }).element;
+        }
+
+        function drop(e) {
+            e.preventDefault();
+        }
+
+        // 순서 나열 문제 정답 체크 함수 수정
+        function checkSequenceAnswer(container) {
+            const currentOrder = Array.from(container.children)
+                .map(item => item.textContent);
+            
+            const isCorrect = currentOrder.every((item, index) => item === currentQuestion.correctOrder[index]);
+            const resultElement = document.getElementById('result');
+            const currentTime = Date.now();
+            
+            if (isCorrect && currentTime - lastAnsweredTime > 1000) {
+                resultElement.textContent = '정답입니다! 👏';
+                resultElement.style.color = 'green';
+                lastAnsweredTime = currentTime;
+                
+                // 정답일 때만 answeredQuestions에 추가
+                answeredQuestions.add(currentQuestion.index);
+                
+                // 현재 선택된 과목에 따라 필터링된 문제 목록 생성
+                let filteredQuestions = questionBank;
+                if (currentSubject) {
+                    filteredQuestions = questionBank.filter(q => q.subject === currentSubject);
+                }
+                
+                // 현재 과목의 문제 중 답변한 문제 수 계산
+                const answeredInCurrentSubject = Array.from(answeredQuestions)
+                    .filter(index => questionBank[index].subject === currentSubject).length;
+                
+                // 진행 상황 업데이트
+                updateProgress();
+                
+                // 모든 문제를 풀었는지 확인 (현재 과목의 문제만 고려)
+                if (answeredInCurrentSubject >= filteredQuestions.length) {
+                    setTimeout(() => {
+                        resultElement.textContent = '';
+                        currentQuestion = null;
+                        showCompletionCelebration();
+                    }, 1000);
+                } else {
+                    setTimeout(() => {
+                        resultElement.textContent = '';
+                        currentQuestion = null;
+                        questionSequence = Math.min(questionSequence + 1, questionBank.length);
+                        generateQuestion();
+                    }, 1000);
+                }
+            } else if (!isCorrect) {
+                resultElement.textContent = '틀렸습니다.';
+                resultElement.style.color = 'red';
+                
+                // 1초 후에 메시지 삭제
+                setTimeout(() => {
+                    resultElement.textContent = '';
+                }, 1000);
+            }
+        }
+
+        // 수정 모드 상태 관리 변수
+        let editingQuestionIndex = null;
+        let lastEditButtonPosition = null;
+
+        // 문제 수정 함수 수정
+        function editQuestion(index) {
+            const question = questionBank[index];
+            if (!question) return;
+
+            // 수정 버튼의 위치 저장
+            const editButton = document.querySelector(`.edit-btn[onclick="editQuestion(${index})"]`);
+            if (editButton) {
+                lastEditButtonPosition = editButton.getBoundingClientRect().top + window.pageYOffset;
+            }
+
+            showTab('edit');
+            
+            document.querySelectorAll('#edit-section .question-type-select .tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+                btn.style.backgroundColor = '#e9ecef';
+                btn.style.color = '#333';
+            });
+            
+            document.querySelectorAll('#edit-section .form-toggle').forEach(form => {
+                form.classList.remove('active');
+            });
+            
+            const typeBtn = document.querySelector(`#edit-section [onclick="toggleQuestionType('${question.type}')"]`);
+            if (typeBtn) {
+                typeBtn.classList.add('active');
+                typeBtn.style.backgroundColor = '#007bff';
+                typeBtn.style.color = 'white';
+            }
+            
+            const formId = {
+                'multiple': 'editMultipleChoiceForm',
+                'subjective': 'editSubjectiveForm',
+                'sequence': 'editSequenceForm'
+            }[question.type];
+            
+            if (formId) {
+                const form = document.getElementById(formId);
+                form.classList.add('active');
+                form.dataset.questionIndex = index;  // 문제 인덱스 추가
+            }
+            
+            // 폼 필드 채우기
+            if (question.type === 'multiple') {
+                document.getElementById('editMcSubject').value = question.subject;
+                document.getElementById('editMcQuestion').value = question.question;
+                document.getElementById('editOption1').value = question.options[0];
+                document.getElementById('editOption2').value = question.options[1];
+                document.getElementById('editOption3').value = question.options[2];
+                document.getElementById('editOption4').value = question.options[3];
+                document.getElementById('editMcCorrectAnswer').value = question.correctAnswer + 1;
+            } else if (question.type === 'subjective') {
+                document.getElementById('editSubSubject').value = question.subject;
+                document.getElementById('editSubQuestion').value = question.question;
+                document.getElementById('editSubCorrectAnswer').value = question.correctAnswer;
+            } else if (question.type === 'sequence') {
+                document.getElementById('editSeqSubject').value = question.subject;
+                document.getElementById('editSeqQuestion').value = question.question;
+                const itemsContainer = document.getElementById('editSequenceItems');
+                itemsContainer.innerHTML = '';
+                question.items.forEach((item, i) => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'sequence-item';
+                    itemDiv.innerHTML = `
+                        <input type="text" class="sequence-input" placeholder="순서 ${i + 1}" value="${item}" required>
+                        ${i >= 2 ? '<button type="button" class="delete-btn" onclick="removeSequenceItem(this)"><i class="fas fa-times"></i></button>' : ''}
+                    `;
+                    itemsContainer.appendChild(itemDiv);
+                });
+            }
+        }
+
+        function updateQuestion(event) {
+            event.preventDefault();
+            
+            const type = document.querySelector('#edit-section .question-type-select .tab-btn.active').getAttribute('onclick').match(/'([^']+)'/)[1];
+            let questionData;
+            
+            if (type === 'multiple') {
+                const subject = document.getElementById('editMcSubject').value;
+                const question = document.getElementById('editMcQuestion').value;
+                const options = [
+                    document.getElementById('editOption1').value,
+                    document.getElementById('editOption2').value,
+                    document.getElementById('editOption3').value,
+                    document.getElementById('editOption4').value
+                ];
+                const correctAnswer = parseInt(document.getElementById('editMcCorrectAnswer').value) - 1;
+
+                if (!subject || !question || options.some(option => !option) || isNaN(correctAnswer)) {
+                    alert('모든 필드를 입력해주세요.');
+                    return;
+                }
+
+                questionData = {
+                    type: 'multiple',
+                    subject: subject,
+                    question: question,
+                    options: options,
+                    correctAnswer: correctAnswer
+                };
+            } else if (type === 'subjective') {
+                const subject = document.getElementById('editSubSubject').value;
+                const question = document.getElementById('editSubQuestion').value;
+                const answer = document.getElementById('editSubCorrectAnswer').value;
+
+                if (!subject || !question || !answer) {
+                    alert('모든 필드를 입력해주세요.');
+                    return;
+                }
+
+                questionData = {
+                    type: 'subjective',
+                    subject: subject,
+                    question: question,
+                    correctAnswer: answer
+                };
+            } else if (type === 'sequence') {
+                const subject = document.getElementById('editSeqSubject').value;
+                const question = document.getElementById('editSeqQuestion').value;
+                const items = Array.from(document.getElementById('editSequenceItems').children)
+                    .map(item => item.querySelector('.sequence-input').value);
+
+                if (!subject || !question || items.some(item => !item)) {
+                    alert('모든 필드를 입력해주세요.');
+                    return;
+                }
+
+                questionData = {
+                    type: 'sequence',
+                    subject: subject,
+                    question: question,
+                    items: items,
+                    correctOrder: [...items]
+                };
+            }
+
+            // 문제 데이터가 유효한지 확인
+            if (!questionData) {
+                alert('문제 데이터가 유효하지 않습니다.');
+                return;
+            }
+
+            // 수정 중인 문제의 인덱스 가져오기
+            const editForm = event.target.closest('form');
+            const questionIndex = parseInt(editForm.dataset.questionIndex);
+
+            if (isNaN(questionIndex) || questionIndex < 0 || questionIndex >= questionBank.length) {
+                alert('수정할 문제의 인덱스를 찾을 수 없습니다.');
+                return;
+            }
+
+            // 문제 업데이트
+            questionBank[questionIndex] = questionData;
+            saveQuestionBank();
+            
+            // 문제 풀기 페이지에서 현재 문제가 수정된 문제라면 즉시 업데이트
+            if (currentQuestion && questionBank.indexOf(currentQuestion) === questionIndex) {
+                currentQuestion = questionData;
+                displayCurrentQuestion();
+            }
+            
+            // 수정 완료 후 목록 페이지로 이동
+            showTab('list');
+            
+            // 현재 필터 유지하면서 목록 업데이트
+            const activeFilter = document.querySelector('.filter-btn.active');
+            const currentFilterType = activeFilter ? activeFilter.getAttribute('onclick').match(/'([^']+)'/)[1] : 'all';
+            filterQuestions(currentFilterType);
+
+            // 수정 완료 후 원래 위치로 스크롤
+            if (lastEditButtonPosition) {
+                window.scrollTo({
+                    top: lastEditButtonPosition - 100,
+                    behavior: 'smooth'
+                });
+            }
+
+            alert('문제가 성공적으로 수정되었습니다.');
+        }
+
+        function addEditSequenceItem() {
+            const container = document.getElementById('editSequenceItems');
+            const itemCount = container.children.length;
+            const newItem = document.createElement('div');
+            newItem.className = 'sequence-item';
+            newItem.innerHTML = `
+                <input type="text" class="sequence-input" placeholder="순서 ${itemCount + 1}" required>
+                ${itemCount >= 2 ? '<button type="button" class="delete-btn" onclick="removeSequenceItem(this)"><i class="fas fa-times"></i></button>' : ''}
+            `;
+            container.appendChild(newItem);
+        }
+
+        // 수정된 updateQuestionList 함수
+        function updateQuestionList(filterType = 'all', subjectFilter = '') {
+            console.log('updateQuestionList called with:', { filterType, subjectFilter });
+            console.log('Question bank:', questionBank);
+            
+            const listContainer = document.getElementById('questionList');
+            if (!listContainer) {
+                console.error('Question list container not found');
+                return;
+            }
+
+            listContainer.innerHTML = '';
+            
+            // 필터링 로직 수정
+            let filteredQuestions = questionBank;
+            
+            if (filterType === 'requirement' || filterType === 'design' || filterType === 'application') {
+                filteredQuestions = questionBank.filter(q => q.subject === filterType);
+            } else if (filterType !== 'all' && ['multiple', 'subjective', 'sequence'].includes(filterType)) {
+                filteredQuestions = questionBank.filter(q => q.type === filterType);
+            } else if (filterType !== 'all') {
+                // 과목명으로 필터링
+                filteredQuestions = questionBank.filter(q => q.subject === filterType);
+            }
+            
+            console.log('Filtered questions:', filteredQuestions);
+            
+            if (filteredQuestions.length === 0) {
+                listContainer.innerHTML = '<p class="no-questions">등록된 문제가 없습니다.</p>';
+                return;
+            }
+            
+            filteredQuestions.forEach((question, filteredIndex) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question-item';
+                
+                const actualIndex = questionBank.indexOf(question);
+                
+                const typeText = {
+                    multiple: '객관식',
+                    subjective: '주관식',
+                    sequence: '순서 나열'
+                }[question.type];
+
+                questionDiv.innerHTML = `
+                    <div class="question-header">
+                        <div class="question-info">
+                            <span class="question-type-label">${typeText}</span>
+                            <span class="question-subject">${question.subject || '과목 없음'}</span>
+                            <span class="question-number">문제 ${filteredIndex + 1}</span>
+                        </div>
+                        <div class="question-actions">
+                            <button class="edit-btn" onclick="editQuestion(${actualIndex})" title="수정">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="delete-btn" onclick="deleteQuestion(${actualIndex})" title="삭제">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="question-content">
+                        <p>${question.question}</p>
+                        ${getQuestionDetails(question)}
+                    </div>
+                `;
+                
+                listContainer.appendChild(questionDiv);
+            });
+        }
+
+        // 문제 상세 정보 생성 함수
+        function getQuestionDetails(question) {
+            switch(question.type) {
+                case 'multiple':
+                    return `
+                        <div class="details">
+                            <ul>
+                                ${question.options.map((opt, i) => 
+                                    `<li style="${i === question.correctAnswer ? 'font-weight: bold;' : ''}">${opt}</li>`
+                                ).join('')}
+                            </ul>
+                        </div>
+                    `;
+                case 'subjective':
+                    return `
+                        <div class="details">
+                            <small>정답: ${question.correctAnswer}</small>
+                        </div>
+                    `;
+                case 'sequence':
+                    return `
+                        <div class="details">
+                            <ol>
+                                ${question.correctOrder.map(item => `<li>${item}</li>`).join('')}
+                            </ol>
+                        </div>
+                    `;
+                default:
+                    return '';
+            }
+        }
+
+        // 수정된 deleteQuestion 함수
+        function deleteQuestion(index) {
+            if (confirm('이 문제를 삭제하시겠습니까?\n삭제된 문제는 복구할 수 있습니다.')) {
+                // 삭제할 문제의 과목 저장
+                const deletedQuestion = questionBank[index];
+                const deletedSubject = deletedQuestion.subject;
+                
+                // 문제 삭제
+                questionBank.splice(index, 1);
+                saveQuestionBank();
+                
+                // 해당 과목의 문제가 더 있는지 확인
+                const hasMoreQuestions = questionBank.some(q => q.subject === deletedSubject);
+                
+                // 현재 활성화된 필터 가져오기
+                const activeFilter = document.querySelector('#list-section .subject-filters .filter-btn.active');
+                const currentFilter = activeFilter ? 
+                    activeFilter.getAttribute('onclick').match(/filterQuestions\('([^']+)'\)/)[1] : 'all';
+                
+                // 과목 목록 업데이트
+                updateSubjectList();
+                
+                // 해당 과목의 문제가 더 없고, 현재 그 과목이 선택되어 있다면 '전체' 필터로 변경
+                if (!hasMoreQuestions && (
+                    currentFilter === deletedSubject || 
+                    (currentFilter === 'requirement' && deletedSubject === '소프트웨어 설계 | 요구사항 확인') ||
+                    (currentFilter === 'design' && deletedSubject === '소프트웨어 설계 | 화면 설계') ||
+                    (currentFilter === 'application' && deletedSubject === '소프트웨어 설계 | 애플리케이션 설계')
+                )) {
+                    filterQuestions('all');
+                } else {
+                    // 현재 필터로 목록 업데이트
+                    filterQuestions(currentFilter);
+                }
+                
+                alert('문제가 삭제되었습니다.');
+            }
+        }
+
+        function synchronizeFilterButtons() {
+            // 현재 존재하는 모든 고유한 과목 목록 가져오기
+            const currentSubjects = new Set(questionBank.map(q => q.subject).filter(subject => subject));
+            
+            // 퀴즈 섹션의 필터 버튼 동기화
+            const quizSection = document.querySelector('#quiz-section .subject-filters');
+            if (quizSection) {
+                const filterButtons = quizSection.querySelectorAll('.filter-btn');
+                filterButtons.forEach(button => {
+                    const subject = button.textContent;
+                    if (subject !== '전체' && !currentSubjects.has(subject)) {
+                        // 버튼에 제거 애니메이션 적용
+                        button.style.transition = 'all 0.3s ease';
+                        button.style.opacity = '0';
+                        button.style.transform = 'translateY(20px)';
+                        
+                        // 애니메이션 완료 후 버튼 제거
+                        setTimeout(() => {
+                            button.remove();
+                        }, 300);
+                    }
+                });
+            }
+            
+            // 목록 섹션의 필터 버튼 동기화
+            const listSection = document.querySelector('#list-section .question-filters');
+            if (listSection) {
+                const filterButtons = listSection.querySelectorAll('.filter-btn');
+                filterButtons.forEach(button => {
+                    const subject = button.textContent;
+                    // '전체', '객관식', '주관식', '순서 나열' 버튼은 유지
+                    const isSystemButton = ['전체', '객관식', '주관식', '순서 나열'].includes(subject);
+                    if (!isSystemButton && !currentSubjects.has(subject)) {
+                        // 버튼에 제거 애니메이션 적용
+                        button.style.transition = 'all 0.3s ease';
+                        button.style.opacity = '0';
+                        button.style.transform = 'translateY(20px)';
+                        
+                        // 애니메이션 완료 후 버튼 제거
+                        setTimeout(() => {
+                            button.remove();
+                        }, 300);
+                    }
+                });
+            }
+            
+            // 활성화된 필터가 제거된 경우 '전체' 버튼 활성화
+            const activeButtons = document.querySelectorAll('.filter-btn.active');
+            if (activeButtons.length === 0) {
+                const allButtons = document.querySelectorAll('.filter-btn');
+                allButtons.forEach(button => {
+                    if (button.textContent === '전체') {
+                        button.classList.add('active');
+                    }
+                });
+            }
+        }
+
+        // 삭제된 문제 복구 함수
+        function restoreQuestion(index) {
+            const restoredQuestion = deletedQuestions.splice(index, 1)[0];
+            questionBank.push(restoredQuestion.question);
+            saveQuestionBank();
+            updateQuestionList();
+            alert('문제가 복구되었습니다.');
+        }
+
+        // 삭제된 문제 목록 표시 함수
+        function showDeletedQuestions() {
+            const listContainer = document.getElementById('questionList');
+            if (!listContainer) return;
+
+            listContainer.innerHTML = '';
+            
+            if (deletedQuestions.length === 0) {
+                listContainer.innerHTML = '<p class="no-questions">삭제된 문제가 없습니다.</p>';
+                return;
+            }
+            
+            deletedQuestions.forEach((item, index) => {
+                const question = item.question;
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question-item deleted';
+                
+                const typeText = {
+                    multiple: '객관식',
+                    subjective: '주관식',
+                    sequence: '순서 나열'
+                }[question.type];
+
+                questionDiv.innerHTML = `
+                    <div class="question-header">
+                        <div class="question-actions">
+                            <button class="restore-btn" onclick="restoreQuestion(${index})" title="복구">
+                                <i class="fas fa-undo"></i> 복구
+                            </button>
+                        </div>
+                        <span class="question-type-label">${typeText}</span>
+                        <span class="question-number">삭제된 문제</span>
+                    </div>
+                    <div class="question-content">
+                        <p>${question.question}</p>
+                        ${getQuestionDetails(question)}
+                    </div>
+                `;
+                
+                listContainer.appendChild(questionDiv);
+            });
+        }
+
+        // 문제 풀기 상태 저장 함수
+        function saveQuizState() {
+            const quizState = {
+                currentQuestion: currentQuestion,
+                answeredQuestions: Array.from(answeredQuestions),
+                remainingQuestions: remainingQuestions,
+                questionSequence: questionSequence,
+                currentSubject: currentSubject
+            };
+            localStorage.setItem('quizState', JSON.stringify(quizState));
+        }
+
+        // 문제 풀기 상태 복원 함수
+        function restoreQuizState() {
+            const savedState = localStorage.getItem('quizState');
+            if (savedState) {
+                const quizState = JSON.parse(savedState);
+                currentQuestion = quizState.currentQuestion;
+                answeredQuestions = new Set(quizState.answeredQuestions);
+                remainingQuestions = quizState.remainingQuestions;
+                questionSequence = quizState.questionSequence;
+                currentSubject = quizState.currentSubject;
+                
+                if (currentQuestion) {
+                    displayCurrentQuestion();
+                    updateProgress();
+                }
+            }
+        }
+
+        // showTab 함수 수정
+        function showTab(tabName) {
+            // 현재 상태 저장
+            const state = {
+                tab: tabName,
+                scrollY: window.scrollY
+            };
+            
+            // 퀴즈 탭의 경우 문제 상태도 저장
+            if (tabName === 'quiz' && currentQuestion) {
+                saveQuizState();
+            } else if (tabName === 'list') {
+                // 문제 목록 탭으로 이동할 때 현재 문제 풀기 상태를 저장
+                const quizSection = document.getElementById('quiz-section');
+                if (quizSection && quizSection.style.display !== 'none') {
+                    saveQuizState();
+                }
+            }
+            
+            // 상태를 history에 저장
+            history.pushState(state, '', window.location.pathname);
+            
+            // 모든 탭 버튼 비활성화
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // 선택된 탭 버튼 활성화
+            const selectedTabBtn = document.querySelector(`[onclick="showTab('${tabName}')"]`);
+            if (selectedTabBtn) {
+                selectedTabBtn.classList.add('active');
+            }
+            
+            // 모든 섹션 숨기기
+            document.getElementById('quiz-section').style.display = 'none';
+            document.getElementById('admin-section').style.display = 'none';
+            document.getElementById('edit-section').style.display = 'none';
+            document.getElementById('list-section').style.display = 'none';
+            
+            // 선택된 섹션 표시
+            if (tabName === 'quiz') {
+                const quizSection = document.getElementById('quiz-section');
+                quizSection.style.display = 'flex';
+                restoreQuizState();
+            } else if (tabName === 'admin') {
+                document.getElementById('admin-section').style.display = 'block';
+                toggleQuestionType('multiple');
+            } else if (tabName === 'edit') {
+                document.getElementById('edit-section').style.display = 'block';
+            } else if (tabName === 'list') {
+                document.getElementById('list-section').style.display = 'block';
+            }
+        }
+
+        // popstate 이벤트 핸들러 수정
+        window.addEventListener('popstate', function(event) {
+            if (event.state) {
+                // 모든 탭 버튼 비활성화
+                document.querySelectorAll('.tab-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                
+                // 선택된 탭 버튼 활성화
+                const selectedTabBtn = document.querySelector(`[onclick="showTab('${event.state.tab}')"]`);
+                if (selectedTabBtn) {
+                    selectedTabBtn.classList.add('active');
+                }
+                
+                // 모든 섹션 숨기기
+                document.getElementById('quiz-section').style.display = 'none';
+                document.getElementById('admin-section').style.display = 'none';
+                document.getElementById('edit-section').style.display = 'none';
+                document.getElementById('list-section').style.display = 'none';
+                
+                // 선택된 섹션 표시
+                if (event.state.tab === 'quiz') {
+                    const quizSection = document.getElementById('quiz-section');
+                    quizSection.style.display = 'flex';
+                    restoreQuizState();
+                } else if (event.state.tab === 'admin') {
+                    document.getElementById('admin-section').style.display = 'block';
+                    toggleQuestionType('multiple');
+                } else if (event.state.tab === 'edit') {
+                    document.getElementById('edit-section').style.display = 'block';
+                } else if (event.state.tab === 'list') {
+                    document.getElementById('list-section').style.display = 'block';
+                }
+            }
+        });
+
+        // 문제 필터링 함수 수정
+        function filterQuestions(type) {
+            console.log('filterQuestions called with type:', type);
+            
+            const allFilterButtons = document.querySelectorAll('#list-section .subject-filters .filter-btn');
+            const selectedBtn = document.querySelector(`#list-section .subject-filters .filter-btn[onclick="filterQuestions('${type}')"]`);
+            
+            if (!selectedBtn) {
+                console.log('Selected button not found for type:', type);
+                return;
+            }
+
+            // 모든 버튼 비활성화
+                allFilterButtons.forEach(btn => {
+                btn.classList.remove('active');
+                        btn.style.backgroundColor = '';
+                        btn.style.color = '';
+                        btn.style.transform = '';
+                        btn.style.boxShadow = '';
+                });
+                
+            // 선택된 버튼 활성화
+                selectedBtn.classList.add('active');
+            selectedBtn.style.display = 'inline-block';
+            selectedBtn.style.visibility = 'visible';
+            selectedBtn.style.opacity = '1';
+            selectedBtn.style.backgroundColor = '#4CAF50';
+            selectedBtn.style.color = 'white';
+            selectedBtn.style.transform = 'translateY(-1px)';
+            selectedBtn.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
+
+                // 문제 필터링
+                let filteredQuestions = questionBank;
+                
+                if (type === 'multiple' || type === 'subjective' || type === 'sequence') {
+                    // 문제 유형으로 필터링
+                    filteredQuestions = questionBank.filter(q => q.type === type);
+                } else if (type === 'all') {
+                    // 전체 문제 표시
+                    filteredQuestions = questionBank;
+                } else if (type === 'requirement') {
+                    // 요구사항 확인 과목 필터링
+                    filteredQuestions = questionBank.filter(q => q.subject === '소프트웨어 설계 | 요구사항 확인');
+                } else if (type === 'design') {
+                    // 화면 설계 과목 필터링
+                    filteredQuestions = questionBank.filter(q => q.subject === '소프트웨어 설계 | 화면 설계');
+                } else if (type === 'application') {
+                    // 애플리케이션 설계 과목 필터링
+                    filteredQuestions = questionBank.filter(q => q.subject === '소프트웨어 설계 | 애플리케이션 설계');
+                } else {
+                // 커스텀 과목명으로 필터링
+                filteredQuestions = questionBank.filter(q => q.subject === type);
+                }
+                
+                console.log('Filtered questions:', filteredQuestions);
+                
+                // 결과 표시
+                const questionList = document.getElementById('questionList');
+                if (questionList) {
+                questionList.style.display = 'block';
+                    if (filteredQuestions.length === 0) {
+                        questionList.innerHTML = '<p class="no-questions">해당 유형의 문제가 없습니다.</p>';
+                    } else {
+                        displayFilteredQuestions(filteredQuestions);
+                    }
+                }
+
+            // 필터 상태 저장
+            const currentState = history.state || {};
+            history.replaceState({
+                ...currentState,
+                listState: {
+                    activeFilters: [type],
+                    timestamp: Date.now()
+                }
+            }, '', window.location.href);
+        }
+
+        function displayFilteredQuestions(questions) {
+            const listContainer = document.getElementById('questionList');
+            if (!listContainer) return;
+            
+            listContainer.innerHTML = '';
+            
+            questions.forEach((question, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question-item';
+                
+                const typeText = {
+                    multiple: '객관식',
+                    subjective: '주관식',
+                    sequence: '순서 나열'
+                }[question.type];
+
+                questionDiv.innerHTML = `
+                    <div class="question-header">
+                        <div class="question-info">
+                            <span class="question-type-label">${typeText}</span>
+                            <span class="question-subject">${question.subject || '과목 없음'}</span>
+                            <span class="question-number">문제 ${index + 1}</span>
+                        </div>
+                        <div class="question-actions">
+                            <button class="edit-btn" onclick="editQuestion(${questionBank.indexOf(question)})" title="수정">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="delete-btn" onclick="deleteQuestion(${questionBank.indexOf(question)})" title="삭제">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="question-content">
+                        <p>${question.question}</p>
+                        ${getQuestionDetails(question)}
+                    </div>
+                `;
+                
+                listContainer.appendChild(questionDiv);
+            });
+        }
+
+        // 문제 접기/펼치기 함수
+        function toggleQuestion(button) {
+            const content = button.closest('.question-item').querySelector('.question-content');
+            const icon = button.querySelector('i');
+            
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                icon.className = 'fas fa-chevron-down';
+            } else {
+                content.style.display = 'none';
+                icon.className = 'fas fa-chevron-up';
+            }
+        }
+
+        // 페이지 로드 시 실행되는 코드
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, initializing...');
+            
+            // 과목명 업데이트
+            updateSubjectNames();
+            
+            // 문제 은행 초기화
+            console.log('Loading question bank...');
+            loadQuestionBank();
+            
+            console.log('Question bank loaded:', questionBank);
+            
+            // 과목 목록 업데이트
+            console.log('Updating subject list...');
+            updateSubjectList();
+            console.log('Subject list updated');
+            
+            // 초기 탭 설정
+            const hash = window.location.hash;
+            let initialTab = 'list';  // 기본값을 'list'로 변경
+            console.log('Current hash:', hash);
+
+            if (hash) {
+                const tabName = hash.substring(1);
+                if (['quiz', 'admin', 'list', 'edit'].includes(tabName)) {
+                    initialTab = tabName;
+                    console.log('Setting initial tab from hash:', initialTab);
+                }
+            }
+            
+            // 초기 탭 표시 (현재 탭 상태 유지)
+            const currentTab = document.querySelector('.tab-btn.active');
+            if (currentTab) {
+                const currentTabName = currentTab.getAttribute('onclick').match(/showTab\('([^']+)'\)/)[1];
+                console.log('Maintaining current tab:', currentTabName);
+                showTab(currentTabName, true);
+            } else {
+            console.log('Showing initial tab:', initialTab);
+            showTab(initialTab, true);
+            }
+
+            // '전체' 버튼 활성화
+            const listAllButton = document.querySelector('#list-section .subject-filters .filter-btn[onclick="filterQuestions(\'all\')"]');
+            if (listAllButton) {
+                listAllButton.classList.add('active', 'button-animation');
+                filterQuestions('all');
+                setTimeout(() => {
+                    listAllButton.classList.remove('button-animation');
+                }, 300);
+            }
+
+            // 필터 버튼 보이기
+            const quizFilters = document.querySelector('.quiz-filters');
+            if (quizFilters) {
+                quizFilters.style.display = 'flex';
+                quizFilters.style.visibility = 'visible';
+                quizFilters.style.opacity = '1';
+            }
+
+            // 필터 버튼 강제 표시
+            const subjectFilters = document.querySelector('.subject-filters');
+            if (subjectFilters) {
+                subjectFilters.style.display = 'flex';
+                subjectFilters.style.visibility = 'visible';
+                subjectFilters.style.opacity = '1';
+                const buttons = subjectFilters.querySelectorAll('.filter-btn');
+                buttons.forEach(button => {
+                    button.style.display = 'inline-block';
+                    button.style.visibility = 'visible';
+                    button.style.opacity = '1';
+                });
+
+                // '전체' 필터 버튼 활성화 (퀴즈 섹션)
+                const quizAllButton = document.querySelector('#quiz-section .subject-filters .filter-btn[onclick="filterQuizBySubject(\'\')"]');
+                if (quizAllButton) {
+                    // 기존 활성화된 버튼들 비활성화
+                    document.querySelectorAll('#quiz-section .subject-filters .filter-btn').forEach(btn => {
+                        btn.classList.remove('active');
+                        btn.style.backgroundColor = '#e9ecef';
+                        btn.style.color = '#333';
+                        btn.style.transform = 'none';
+                        btn.style.boxShadow = 'none';
+                    });
+                    
+                    // '전체' 버튼 활성화 및 필터 적용 (인라인 스타일만 사용)
+                    quizAllButton.style.backgroundColor = '#4CAF50';
+                    quizAllButton.style.color = 'white';
+                    quizAllButton.style.transform = 'translateY(-1px)';
+                    quizAllButton.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
+                    filterQuizBySubject('');
+                }
+
+                // '전체' 필터 버튼 활성화 (목록 섹션)
+                const listAllButton = document.querySelector('#list-section .subject-filters .filter-btn[onclick="filterQuestions(\'all\')"]');
+                if (listAllButton) {
+                    // 애니메이션 클래스 추가
+                    listAllButton.classList.add('button-animation');
+                    
+                    // 필터 적용
+                    filterQuestions('all');
+                    
+                    // 애니메이션 클래스 제거
+                    setTimeout(() => {
+                        listAllButton.classList.remove('button-animation');
+                    }, 300);
+                }
+            }
+
+            // 문제 목록 초기화
+            const questionList = document.getElementById('questionList');
+            if (questionList) {
+                questionList.innerHTML = '';
+            }
+
+            // 전체 버튼 활성화 및 필터링 적용
+            console.log('Activating all filter...');
+            setTimeout(() => {
+                const allButton = document.querySelector('#list-section .subject-filters .filter-btn[onclick="filterQuestions(\'all\')"]');
+                if (allButton) {
+                    // 다른 모든 버튼의 active 상태 제거
+                    document.querySelectorAll('#list-section .subject-filters .filter-btn').forEach(btn => {
+                        btn.classList.remove('active');
+                        btn.style.backgroundColor = '';
+                        btn.style.color = '';
+                        btn.style.transform = '';
+                        btn.style.boxShadow = '';
+                    });
+
+                    // 전체 버튼 활성화
+                    allButton.classList.add('active');
+                    allButton.style.display = 'inline-block';
+                    allButton.style.visibility = 'visible';
+                    allButton.style.opacity = '1';
+                    allButton.style.backgroundColor = '#4CAF50';
+                    allButton.style.color = 'white';
+                    allButton.style.transform = 'translateY(-1px)';
+                    allButton.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
+
+                    // 필터 상태 저장 및 적용
+                    const currentState = history.state || {};
+                    history.replaceState({
+                        ...currentState,
+                        listState: {
+                            activeFilters: ['all'],
+                            timestamp: Date.now()
+                        }
+                    }, '', window.location.href);
+                    
+                    filterQuestions('all');
+                }
+            }, 100);
+        });
+
+        // 버튼 생성 시 자동으로 너비 조정
+        function createButton(text, className, onClick) {
+            const button = document.createElement('button');
+            button.textContent = text;
+            button.className = className;
+            button.onclick = onClick;
+            adjustButtonWidth(button);
+            return button;
+        }
+
+        // 진행 상황을 표시하는 함수 수정
+        function updateProgress() {
+            let progressElement = document.getElementById('progress');
+            if (!progressElement) {
+                progressElement = document.createElement('div');
+                progressElement.id = 'progress';
+                progressElement.className = 'progress';
+                const questionContainer = document.querySelector('.question-container');
+                if (questionContainer) {
+                    const questionElement = document.getElementById('question');
+                    questionContainer.insertBefore(progressElement, questionElement);
+                }
+            }
+
+            // 현재 선택된 과목의 총 문제 수와 필터링된 문제 인덱스 계산
+            let totalQuestions = 0;
+            let filteredQuestionIndices = [];
+            
+            if (currentSubject) {
+                // 현재 선택된 과목의 문제만 필터링
+                filteredQuestionIndices = questionBank
+                    .map((q, index) => q.subject === currentSubject ? index : -1)
+                    .filter(index => index !== -1);
+                totalQuestions = filteredQuestionIndices.length;
+            } else {
+                // 전체 문제
+                totalQuestions = questionBank.length;
+                filteredQuestionIndices = questionBank.map((_, index) => index);
+            }
+
+            // 현재 과목에 해당하는 답변한 문제 수 계산
+            const answeredCount = Array.from(answeredQuestions)
+                .filter(index => filteredQuestionIndices.includes(index)).length;
+
+            const percentage = totalQuestions > 0 ? (answeredCount / totalQuestions) * 100 : 0;
+
+            // 디버깅 로그 추가
+            console.log('Progress Update:', {
+                currentSubject,
+                totalQuestions,
+                answeredCount,
+                percentage,
+                filteredQuestionIndices,
+                answeredQuestions: Array.from(answeredQuestions),
+                currentQuestion: currentQuestion ? {
+                    index: currentQuestion.index,
+                    subject: currentQuestion.subject,
+                    question: currentQuestion.question
+                } : null
+            });
+
+            // 프로그레스 바 HTML 구조 생성
+            progressElement.innerHTML = `
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: ${percentage}%"></div>
+                    <div class="progress-text">진행 상황: ${answeredCount}/${totalQuestions}</div>
+                </div>
+            `;
+
+            // 활성화된 필터가 있을 때만 표시
+            const activeFilter = document.querySelector('#quiz-section .subject-filters .filter-btn.active');
+            progressElement.style.display = activeFilter ? 'block' : 'none';
+        }
+
+        // 축하 팝업 표시 함수 수정
+        function showCompletionCelebration() {
+            // 기존 축하 팝업이 있다면 제거
+            const existingCelebration = document.querySelector('.completion-celebration');
+            if (existingCelebration) {
+                existingCelebration.remove();
+            }
+
+            // 새로운 축하 팝업 생성
+            const celebration = document.createElement('div');
+            celebration.className = 'completion-celebration';
+            
+            const message = document.createElement('div');
+            message.className = 'completion-message';
+            message.innerHTML = `
+                <h2>🎉 축하합니다! 🎉</h2>
+                <p>모든 문제를 완료하셨습니다!</p>
+                <p>훌륭한 성취를 이루어냈어요!</p>
+                <button class="celebration-btn" onclick="restartQuiz()">다시 시작하기</button>
+            `;
+            celebration.appendChild(message);
+
+            // 컨페티 효과 추가
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                const color = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'][Math.floor(Math.random() * 6)];
+                confetti.style.setProperty('--confetti-color', color);
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.setProperty('--fall-duration', (Math.random() * 2 + 1) + 's');
+                celebration.appendChild(confetti);
+            }
+
+            // body에 축하 팝업 추가
+            document.body.appendChild(celebration);
+
+            // 컨페티 애니메이션을 위한 스타일 추가
+            const styleSheet = document.createElement('style');
+            styleSheet.textContent = `
+                .completion-celebration {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background-color: rgba(0, 0, 0, 0.7);
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 1000;
+                    animation: fadeIn 0.5s ease;
+                }
+                .completion-message {
+                    background-color: white;
+                    padding: 40px;
+                    border-radius: 20px;
+                    text-align: center;
+                    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+                    animation: scaleIn 0.5s ease;
+                    max-width: 90%;
+                    width: 400px;
+                }
+                .completion-message h2 {
+                    color: #4CAF50;
+                    margin-bottom: 20px;
+                    font-size: 28px;
+                }
+                .completion-message p {
+                    color: #333;
+                    margin-bottom: 20px;
+                    font-size: 18px;
+                    line-height: 1.5;
+                }
+                .celebration-btn {
+                    background-color: #4CAF50;
+                    color: white;
+                    padding: 12px 24px;
+                    border: none;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    font-size: 16px;
+                    transition: all 0.3s ease;
+                    margin-top: 20px;
+                }
+                .celebration-btn:hover {
+                    background-color: #45a049;
+                    transform: scale(1.05);
+                }
+                .confetti {
+                    position: absolute;
+                    width: 10px;
+                    height: 10px;
+                    background-color: var(--confetti-color);
+                    clip-path: polygon(50% 0%, 90% 20%, 100% 60%, 75% 100%, 25% 100%, 0% 60%, 10% 20%);
+                    animation: confetti-fall var(--fall-duration) ease-in forwards;
+                }
+                @keyframes fadeIn {
+                    from { opacity: 0; }
+                    to { opacity: 1; }
+                }
+                @keyframes scaleIn {
+                    from { transform: scale(0.8); opacity: 0; }
+                    to { transform: scale(1); opacity: 1; }
+                }
+                @keyframes confetti-fall {
+                    0% { 
+                        transform: translateY(-10px) rotate(0deg);
+                        opacity: 1;
+                    }
+                    100% { 
+                        transform: translateY(100vh) rotate(720deg);
+                        opacity: 0;
+                    }
+                }
+            `;
+            document.head.appendChild(styleSheet);
+        }
+
+        function restartQuiz() {
+            const celebration = document.querySelector('.completion-celebration');
+            if (celebration) {
+                celebration.remove();
+            }
+
+            answeredQuestions.clear();
+            remainingQuestions = Array.from({ length: questionBank.length }, (_, i) => i);
+            currentQuestion = null;
+            questionSequence = 1;
+            lastAnsweredTime = 0;
+            generateQuestion();
+        }
+
+        function getTextWidth(text, font) {
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            context.font = font;
+            return context.measureText(text).width;
+        }
+
+        function addMultipleChoiceQuestion(event) {
+            event.preventDefault();
+            const subject = document.getElementById('mcSubject').value.trim();
+            const question = document.getElementById('mcQuestion').value;
+            const options = [
+                document.getElementById('option1').value,
+                document.getElementById('option2').value,
+                document.getElementById('option3').value,
+                document.getElementById('option4').value
+            ];
+            const correctAnswer = parseInt(document.getElementById('mcCorrectAnswer').value) - 1;
+
+            if (!subject || !question || options.some(opt => !opt) || isNaN(correctAnswer)) {
+                alert('모든 필드를 입력해주세요.');
+                return;
+            }
+
+            const newQuestion = {
+                type: 'multiple',
+                subject: subject,
+                question: question,
+                options: options,
+                correctAnswer: correctAnswer
+            };
+
+            questionBank.push(newQuestion);
+            saveQuestionBank();
+            event.target.reset();
+            alert('객관식 문제가 등록되었습니다!');
+            
+            // 과목 목록 업데이트
+            updateSubjectList();
+            
+            // 문제 풀기 탭의 필터 버튼 상태 업데이트
+            const quizFilters = document.querySelector('#quiz-section .subject-filters');
+            if (quizFilters) {
+                const existingButtons = quizFilters.querySelectorAll('.filter-btn');
+                existingButtons.forEach(btn => {
+                    const btnSubject = btn.getAttribute('onclick').match(/'([^']+)'/)[1];
+                    if (btnSubject === subject || btnSubject === '') {
+                        btn.style.display = 'inline-block';
+                        btn.style.visibility = 'visible';
+                        btn.style.opacity = '1';
+                    }
+                });
+            }
+        }
+
+        function addSubjectiveQuestion(event) {
+            event.preventDefault();
+            const subject = document.getElementById('subSubject').value.trim();
+            const question = document.getElementById('subQuestion').value;
+            const answer = document.getElementById('subCorrectAnswer').value;
+
+            if (!subject || !question || !answer) {
+                alert('모든 필드를 입력해주세요.');
+                return;
+            }
+
+            const newQuestion = {
+                type: 'subjective',
+                subject: subject,
+                question: question,
+                correctAnswer: answer
+            };
+
+            questionBank.push(newQuestion);
+            saveQuestionBank();
+            event.target.reset();
+            alert('주관식 문제가 등록되었습니다!');
+            
+            // 과목 목록 업데이트
+            updateSubjectList();
+            
+            // 문제 풀기 탭의 필터 버튼 상태 업데이트
+            const quizFilters = document.querySelector('#quiz-section .subject-filters');
+            if (quizFilters) {
+                const existingButtons = quizFilters.querySelectorAll('.filter-btn');
+                existingButtons.forEach(btn => {
+                    const btnSubject = btn.getAttribute('onclick').match(/'([^']+)'/)[1];
+                    if (btnSubject === subject || btnSubject === '') {
+                        btn.style.display = 'inline-block';
+                        btn.style.visibility = 'visible';
+                        btn.style.opacity = '1';
+                    }
+                });
+            }
+        }
+
+        // 문제 상태 복원 함수 수정
+        function restoreQuestionState(state) {
+            if (!state) return;
+            
+            currentQuestion = state.currentQuestion;
+            answeredQuestions = new Set(state.answeredQuestions);
+            remainingQuestions = state.remainingQuestions;
+            questionSequence = state.questionSequence;
+            
+            if (currentQuestion) {
+                displayCurrentQuestion();
+                updateProgress();
+            }
+        }
+
+        // 페이지 로드 시 과목 목록 업데이트
+        function updateSubjectList() {
+            console.log('Updating subject list...');
+            
+            // 현재 존재하는 모든 고유한 과목 목록 가져오기
+            const subjects = new Set(questionBank.map(q => q.subject));
+            console.log('Found subjects:', subjects);
+            
+            // 하드코딩된 과목 버튼들의 매핑
+            const hardcodedSubjects = {
+                'requirement': '소프트웨어 설계 | 요구사항 확인',
+                'design': '소프트웨어 설계 | 화면 설계',
+                'application': '소프트웨어 설계 | 애플리케이션 설계'
+            };
+            
+            // 퀴즈 섹션의 과목 필터 업데이트
+            const quizFilters = document.querySelector('#quiz-section .subject-filters');
+            if (quizFilters) {
+                // 기존 버튼 유지 (전체 버튼)
+                let quizButtonsHtml = `
+                    <button class="filter-btn" onclick="filterQuizBySubject('')">전체</button>
+                `;
+                
+                // 하드코딩된 버튼 추가 (해당 과목의 문제가 있는 경우에만)
+                Object.values(hardcodedSubjects).forEach(subject => {
+                    if (subjects.has(subject)) {
+                        quizButtonsHtml += `
+                            <button class="filter-btn" onclick="filterQuizBySubject('${subject}')">${subject}</button>
+                        `;
+                    }
+                });
+                
+                // 커스텀 과목 버튼 추가 (하드코딩된 과목 제외)
+                subjects.forEach(subject => {
+                    if (!Object.values(hardcodedSubjects).includes(subject) && subject) {
+                        quizButtonsHtml += `
+                            <button class="filter-btn" onclick="filterQuizBySubject('${subject}')">${subject}</button>
+                        `;
+                    }
+                });
+                
+                quizFilters.innerHTML = quizButtonsHtml;
+            }
+            
+            // 목록 섹션의 과목 필터 업데이트
+            const listFilters = document.querySelector('#list-section .subject-filters');
+            if (listFilters) {
+                // 기본 버튼들 추가
+                let listButtonsHtml = `
+                    <button class="filter-btn" onclick="filterQuestions('all')">전체</button>
+                    <button class="filter-btn" onclick="filterQuestions('multiple')">객관식</button>
+                    <button class="filter-btn" onclick="filterQuestions('subjective')">주관식</button>
+                    <button class="filter-btn" onclick="filterQuestions('sequence')">순서 나열</button>
+                `;
+                
+                // 하드코딩된 버튼 추가 (해당 과목의 문제가 있는 경우에만)
+                Object.entries(hardcodedSubjects).forEach(([code, subject]) => {
+                    if (subjects.has(subject)) {
+                        listButtonsHtml += `
+                            <button class="filter-btn" onclick="filterQuestions('${code}')">${subject}</button>
+                        `;
+                    }
+                });
+                
+                // 커스텀 과목 버튼 추가 (하드코딩된 과목 제외)
+                subjects.forEach(subject => {
+                    if (!Object.values(hardcodedSubjects).includes(subject) && subject) {
+                        listButtonsHtml += `
+                            <button class="filter-btn" onclick="filterQuestions('${subject}')">${subject}</button>
+                        `;
+                    }
+                });
+                
+                listFilters.innerHTML = listButtonsHtml;
+            }
+            
+            console.log('Subject list updated');
+        }
+
+        // updateSubjectNames 함수 수정
+        function updateSubjectNames() {
+            const saved = localStorage.getItem('questionBank');
+            if (saved) {
+                try {
+                    const loadedQuestions = JSON.parse(saved);
+                    let updated = false;
+                    
+                    loadedQuestions.forEach(question => {
+                        if (question.subject && question.subject.includes(' - ')) {
+                            question.subject = question.subject.replace(' - ', '|');
+                            updated = true;
+                        }
+                    });
+                    
+                    if (updated) {
+                        localStorage.setItem('questionBank', JSON.stringify(loadedQuestions));
+                        console.log('Updated subject names in localStorage');
+                    }
+                } catch (e) {
+                    console.error('Error updating subject names:', e);
+                }
+            }
+        }
+
+        // filterQuizBySubject 함수 수정
+        function filterQuizBySubject(subject) {
+            console.log('Filtering quiz by subject:', subject);
+            
+            // 모든 버튼 비활성화
+            const allButtons = document.querySelectorAll('#quiz-section .subject-filters .filter-btn');
+            allButtons.forEach(btn => {
+                btn.classList.remove('active');
+                btn.style.backgroundColor = '';
+                btn.style.color = '';
+                btn.style.transform = '';
+                btn.style.boxShadow = '';
+            });
+
+            // 선택된 버튼 활성화
+            const selectedBtn = document.querySelector(`#quiz-section .subject-filters .filter-btn[onclick="filterQuizBySubject('${subject}')"]`);
+            if (selectedBtn) {
+                selectedBtn.classList.add('active');
+                selectedBtn.style.display = 'inline-block';
+                selectedBtn.style.visibility = 'visible';
+                selectedBtn.style.opacity = '1';
+                selectedBtn.style.backgroundColor = '#4CAF50';
+                selectedBtn.style.color = 'white';
+                selectedBtn.style.transform = 'translateY(-1px)';
+                selectedBtn.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
+            }
+
+            // 현재 과목 설정
+            currentSubject = subject === '' ? '' : subject;
+
+            // 문제 필터링
+            let filteredQuestions = questionBank;
+            if (subject === '') {
+                // '전체' 선택 시 모든 문제 포함
+                filteredQuestions = questionBank;
+            } else {
+                // 특정 과목 선택 시 해당 과목의 문제만 필터링
+                filteredQuestions = questionBank.filter(q => q.subject === subject);
+            }
+
+            // 필터링된 문제가 없으면 알림
+            if (filteredQuestions.length === 0) {
+                alert('선택한 과목의 문제가 없습니다.');
+                return;
+            }
+
+            // 해당 과목의 문제 인덱스만 남기고 나머지 답변 기록 제거
+            const filteredIndices = new Set();
+            questionBank.forEach((q, index) => {
+                if (q.subject === subject) {
+                    filteredIndices.add(index);
+                }
+            });
+
+            const newAnsweredQuestions = new Set();
+            answeredQuestions.forEach(index => {
+                if (filteredIndices.has(index)) {
+                    newAnsweredQuestions.add(index);
+                }
+            });
+            answeredQuestions = newAnsweredQuestions;
+
+            // remainingQuestions 초기화 (현재 과목의 문제만 포함)
+            remainingQuestions = Array.from({ length: questionBank.length }, (_, i) => i)
+                .filter(i => questionBank[i].subject === subject && !answeredQuestions.has(i));
+
+            console.log('Filtered state:', {
+                subject,
+                filteredIndices: Array.from(filteredIndices),
+                answeredQuestions: Array.from(answeredQuestions),
+                remainingQuestions
+            });
+
+            // 진행 상황 업데이트
+            updateProgress();
+
+            // 새 문제 생성
+            generateQuestion();
+        }
+    </script>
+</body>
+</html>
